@@ -40,7 +40,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
   static const threeMinutes = 180;
   int totalSeconds = threeMinutes;
   bool isRunning = false;
-  late Timer timer;
+  Timer? timer;
 
   void onTick(Timer timer) {
     if (totalSeconds == 0) {
@@ -70,7 +70,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
   }
 
   void onPausePressed() {
-    timer.cancel();
+    timer?.cancel();
     isRunning = false;
     totalSeconds = 180;
   }
