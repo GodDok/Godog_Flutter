@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'join_step1_screen.dart';
@@ -100,18 +99,18 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 10,
             ),
             Padding(
-              padding: EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.only(left: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    child: Text('회원가입'),
+                    child: const Text('회원가입'),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const JoinStep1Screen(),
-                            fullscreenDialog: true),
+                          builder: (context) => const JoinStep1Screen(),
+                        ),
                       );
                     },
                   )
