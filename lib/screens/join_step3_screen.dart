@@ -42,7 +42,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
               children: <Widget>[
                 DatePickerWidget(
                   looping: false,
-                  firstDate: DateTime(2000, 1, 1),
+                  firstDate: DateTime(1900, 1, 1),
                   lastDate: DateTime(2030, 1, 1),
                   initialDate: DateTime.now(),
                   dateFormat: "dd-MMM-yyyy",
