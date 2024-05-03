@@ -146,9 +146,9 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(backgroundColor: Colors.white),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25),
+        child: SingleChildScrollView(
           child: Column(
             children: [
               const LinearProgressIndicator(
@@ -181,7 +181,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
                 ),
                 onChanged: (value) {
                   onPausePressed();
-        
+          
                   setState(() {
                     email = value;
                     certificationNum = '';
@@ -241,7 +241,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
                     onPressed: () {
                       // 이메일 인증 보내기 요청할 예정
                       onStartPressed();
-        
+          
                       setState(() {
                         isProgressCertification = true;
                       });
