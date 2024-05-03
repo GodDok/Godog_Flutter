@@ -148,170 +148,168 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
       appBar: AppBar(backgroundColor: Colors.white),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const LinearProgressIndicator(
-                value: 0.3,
-                backgroundColor: Colors.grey,
-                color: Colors.white,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-                minHeight: 2.0,
-                semanticsLabel: 'semanticsLabel',
-                semanticsValue: 'semanticsValue',
+        child: Column(
+          children: [
+            const LinearProgressIndicator(
+              value: 0.3,
+              backgroundColor: Colors.grey,
+              color: Colors.white,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+              minHeight: 2.0,
+              semanticsLabel: 'semanticsLabel',
+              semanticsValue: 'semanticsValue',
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  '로그인에 사용할\n아이디를 입력해주세요.',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20.0),
+            TextFormField(
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: '아이디(이메일) 입력',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(
-                height: 30,
-              ),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    '로그인에 사용할\n아이디를 입력해주세요.',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20.0),
+              onChanged: (value) {
+                onPausePressed();
+
+                setState(() {
+                  email = value;
+                  certificationNum = '';
+                  isProgressCertification = false;
+                  isCompletedCertification = false;
+                });
+              },
+            ),
+            const SizedBox(height: 20.0),
+            if (isProgressCertification)
               TextFormField(
-                keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                  labelText: '아이디(이메일) 입력',
+                  labelText: '인증번호 입력',
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) {
-                  onPausePressed();
-          
                   setState(() {
-                    email = value;
-                    certificationNum = '';
-                    isProgressCertification = false;
-                    isCompletedCertification = false;
+                    certificationNum = value;
                   });
                 },
               ),
-              const SizedBox(height: 20.0),
-              if (isProgressCertification)
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: '인증번호 입력',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      certificationNum = value;
-                    });
-                  },
-                ),
-              if (isProgressCertification && !isCompletedCertification)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Text(
-                      '남은 시간 ',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    Text(
-                      format(totalSeconds),
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                  ],
-                ),
-              const SizedBox(height: 20.0),
-              if (!isProgressCertification)
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    style: TextButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                        ),
-                        backgroundColor: getVerificationNumberButtonColor()),
-                    onPressed: () {
-                      // 이메일 인증 보내기 요청할 예정
-                      onStartPressed();
-          
-                      setState(() {
-                        isProgressCertification = true;
-                      });
-                    },
-                    child: const Text(
-                      '인증번호 받기',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                )
-              else
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    style: TextButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                        ),
-                        backgroundColor: getVerificationButtonColor()),
-                    onPressed: () {
-                      if (!isCompletedCertification) FlutterDialog();
-                    },
-                    child: Text(
-                      !isCompletedCertification ? '인증' : '완료',
-                      style: TextStyle(
-                          color: !isCompletedCertification
-                              ? Colors.white
-                              : Colors.black),
-                    ),
-                  ),
-                ),
-              Expanded(child: Container()),
+            if (isProgressCertification && !isCompletedCertification)
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      color: !isCompletedCertification
-                          ? Colors.grey
-                          : Colors.blueAccent,
+                  const Text(
+                    '남은 시간 ',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w300,
                     ),
-                    child: IconButton(
-                      onPressed: () {
-                        if (isCompletedCertification) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const JoinStep2Screen(),
-                            ),
-                          );
-                        }
-                      },
-                      icon: const Icon(
-                        Icons.arrow_forward_sharp,
-                        color: Colors.white,
-                      ),
+                  ),
+                  Text(
+                    format(totalSeconds),
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 50,
+            const SizedBox(height: 20.0),
+            if (!isProgressCertification)
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  style: TextButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      backgroundColor: getVerificationNumberButtonColor()),
+                  onPressed: () {
+                    // 이메일 인증 보내기 요청할 예정
+                    onStartPressed();
+
+                    setState(() {
+                      isProgressCertification = true;
+                    });
+                  },
+                  child: const Text(
+                    '인증번호 받기',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
               )
-            ],
-          ),
+            else
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  style: TextButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      backgroundColor: getVerificationButtonColor()),
+                  onPressed: () {
+                    if (!isCompletedCertification) FlutterDialog();
+                  },
+                  child: Text(
+                    !isCompletedCertification ? '인증' : '완료',
+                    style: TextStyle(
+                        color: !isCompletedCertification
+                            ? Colors.white
+                            : Colors.black),
+                  ),
+                ),
+              ),
+            Expanded(child: Container()),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    color: !isCompletedCertification
+                        ? Colors.grey
+                        : Colors.blueAccent,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      if (isCompletedCertification) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const JoinStep2Screen(),
+                          ),
+                        );
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.arrow_forward_sharp,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 50,
+            )
+          ],
         ),
       ),
     );
