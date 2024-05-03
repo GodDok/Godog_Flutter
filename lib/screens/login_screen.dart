@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 
+import '../widgets/password_toggle_widget.dart';
 import 'join_step1_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   String email = '';
   String password = '';
+  bool obscureText = true;
 
   Color getButtonColor() {
     if (email.isNotEmpty && password.isNotEmpty) {
@@ -21,6 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
       return Colors.grey;
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 20,
             ),
             TextFormField(
+              keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: '이메일',
                 border: OutlineInputBorder(),
@@ -64,11 +68,18 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 20.0),
             TextFormField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: '비밀번호',
                 border: OutlineInputBorder(),
+                suffixIcon: PasswordToggle(
+                  onChanged: (value) {
+                    setState(() {
+                      obscureText = value; // 상태 동기화
+                    });
+                  },
+                ),
               ),
-              obscureText: true,
+              obscureText: obscureText,
               onChanged: (value) {
                 setState(() {
                   password = value;
@@ -100,18 +111,18 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 10,
             ),
             Padding(
-              padding: EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.only(left: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    child: Text('회원가입'),
+                    child: const Text('회원가입'),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const JoinStep1Screen(),
-                            fullscreenDialog: true),
+                          builder: (context) => const JoinStep1Screen(),
+                        ),
                       );
                     },
                   )
