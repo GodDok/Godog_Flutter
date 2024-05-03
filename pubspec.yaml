@@ -32,11 +32,15 @@ dependencies:
     sdk: flutter
 
   flutter_svg: ^1.0.1
+  provider: ^6.1.2
+  shared_preferences: ^2.0.0
+  flutter_holo_date_picker: ^1.1.3
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
+  flutter_spinner_picker: ^0.0.7
 
 dev_dependencies:
   flutter_test:
