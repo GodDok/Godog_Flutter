@@ -173,6 +173,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
             ),
             const SizedBox(height: 20.0),
             TextFormField(
+              keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: '아이디(이메일) 입력',
                 border: OutlineInputBorder(),

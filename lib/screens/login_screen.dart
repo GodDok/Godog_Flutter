@@ -51,6 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 20,
             ),
             TextFormField(
+              keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: '이메일',
                 border: OutlineInputBorder(),
