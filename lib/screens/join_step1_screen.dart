@@ -192,6 +192,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
             const SizedBox(height: 20.0),
             if (isProgressCertification)
               TextFormField(
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   labelText: '인증번호 입력',
                   border: OutlineInputBorder(),

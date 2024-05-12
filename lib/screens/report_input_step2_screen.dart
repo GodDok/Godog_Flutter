@@ -77,6 +77,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
                   child: SizedBox(
                     height: 50,
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                           labelText: '',
@@ -118,6 +119,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
                   child: SizedBox(
                     height: 50,
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                           labelText: '',
@@ -159,6 +161,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
                   child: SizedBox(
                     height: 50,
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                           labelText: '',
@@ -200,6 +203,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
                   child: SizedBox(
                     height: 50,
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                           labelText: '',
@@ -240,6 +244,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
                   child: SizedBox(
                     height: 50,
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                           labelText: '',
@@ -280,6 +285,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
                   child: SizedBox(
                     height: 50,
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                           labelText: '',
@@ -320,6 +326,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
                   child: SizedBox(
                     height: 50,
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                           labelText: '',
@@ -360,6 +367,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
                   child: SizedBox(
                     height: 50,
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                           labelText: '',
                           border: OutlineInputBorder(),
