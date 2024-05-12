@@ -36,6 +36,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xfff5f5f5),
       appBar: AppBar(
         backgroundColor: const Color(0xfff5f5f5),
