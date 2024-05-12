@@ -122,6 +122,7 @@ class _JoinStep2ScreenState extends State<JoinStep2Screen> {
             ),
             const SizedBox(height: 20.0),
             TextFormField(
+              textInputAction: TextInputAction.next,
               keyboardType: TextInputType.emailAddress,
               obscureText: passwordObscureText,
               decoration: InputDecoration(

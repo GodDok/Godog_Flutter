@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
+import 'package:godog/screens/report_input_step1_screen.dart';
 
 class JoinStep3Screen extends StatefulWidget {
   const JoinStep3Screen({super.key});
@@ -239,7 +240,14 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                     ),
                     backgroundColor: getButtonColor()),
                 onPressed: () {
-                  // 로그인 버튼 눌렀을 때 실행할 동작
+                  // 버튼 눌렀을 때 실행할 동작
+                  // 테스트용으로 리포트 검사 화면으로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ReportInputStep1Screen(),
+                    ),
+                  );
                 },
                 child: const Text(
                   '확인',

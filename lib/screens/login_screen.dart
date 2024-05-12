@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:godog/screens/report_input_step1_screen.dart';
 
 import '../widgets/password_toggle_widget.dart';
 import 'join_step1_screen.dart';
@@ -55,6 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 20,
             ),
             TextFormField(
+              textInputAction: TextInputAction.next,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: '이메일',
@@ -100,6 +102,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     backgroundColor: getButtonColor()),
                 onPressed: () {
                   // 로그인 버튼 눌렀을 때 실행할 동작
+                  // 테스트용으로 리포트 검사 화면으로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ReportInputStep1Screen(),
+                    ),
+                  );
                 },
                 child: const Text(
                   '로그인',
