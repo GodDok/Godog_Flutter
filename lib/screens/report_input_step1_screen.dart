@@ -230,6 +230,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xfff5f5f5),
       appBar: AppBar(
         backgroundColor: const Color(0xfff5f5f5),
