@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../widgets/password_toggle_widget.dart';
+import '../widgets/basic_text_button_widget.dart';
+import '../widgets/next_button_widget.dart';
+import '../widgets/password_input_widget.dart';
+import '../widgets/progress_widget.dart';
 import 'join_step3_screen.dart';
 
 class JoinStep2Screen extends StatefulWidget {
@@ -39,7 +41,7 @@ class _JoinStep2ScreenState extends State<JoinStep2Screen> {
     }
   }
 
-  void FlutterDialog() {
+  void flutterDialog() {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -99,15 +101,7 @@ class _JoinStep2ScreenState extends State<JoinStep2Screen> {
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: Column(
           children: [
-            const LinearProgressIndicator(
-              value: 0.7,
-              backgroundColor: Colors.grey,
-              color: Colors.white,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-              minHeight: 2.0,
-              semanticsLabel: 'semanticsLabel',
-              semanticsValue: 'semanticsValue',
-            ),
+            const ProgressWidget(value: 0.7),
             const SizedBox(
               height: 30,
             ),
@@ -121,21 +115,14 @@ class _JoinStep2ScreenState extends State<JoinStep2Screen> {
               ],
             ),
             const SizedBox(height: 20.0),
-            TextFormField(
-              textInputAction: TextInputAction.next,
-              keyboardType: TextInputType.emailAddress,
-              obscureText: passwordObscureText,
-              decoration: InputDecoration(
-                labelText: '비밀번호 입력',
-                border: const OutlineInputBorder(),
-                suffixIcon: PasswordToggle(
-                  onChanged: (value) {
-                    setState(() {
-                      passwordObscureText = value; // 상태 동기화
-                    });
-                  },
-                ),
-              ),
+            PasswordInputWidget(
+              label: '비밀번호 입력',
+              passwordCheckObscureText: passwordObscureText,
+              suffixClick: (value) {
+                setState(() {
+                  passwordObscureText = value; // 상태 동기화
+                });
+              },
               onChanged: (value) {
                 setState(() {
                   isPasswordSettingComplete = false;
@@ -144,20 +131,14 @@ class _JoinStep2ScreenState extends State<JoinStep2Screen> {
               },
             ),
             const SizedBox(height: 20.0),
-            TextFormField(
-              keyboardType: TextInputType.emailAddress,
-              obscureText: passwordCheckObscureText,
-              decoration: InputDecoration(
-                labelText: '비밀번호 확인',
-                border: const OutlineInputBorder(),
-                suffixIcon: PasswordToggle(
-                  onChanged: (value) {
-                    setState(() {
-                      passwordCheckObscureText = value; // 상태 동기화
-                    });
-                  },
-                ),
-              ),
+            PasswordInputWidget(
+              label: '비밀번호 확인',
+              passwordCheckObscureText: passwordCheckObscureText,
+              suffixClick: (value) {
+                setState(() {
+                  passwordCheckObscureText = value; // 상태 동기화
+                });
+              },
               onChanged: (value) {
                 setState(() {
                   isPasswordSettingComplete = false;
@@ -189,60 +170,26 @@ class _JoinStep2ScreenState extends State<JoinStep2Screen> {
             const SizedBox(
               height: 10,
             ),
-            SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: ElevatedButton(
-                style: TextButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    backgroundColor: getVerificationPasswordButtonColor()),
-                onPressed: () {
-                  if (!isPasswordSettingComplete) FlutterDialog();
-                },
-                child: Text(
-                  '확인',
-                  style: TextStyle(
-                      color: !isPasswordSettingComplete
-                          ? Colors.white
-                          : Colors.black),
-                ),
-              ),
+            BasicTextButtonWidget(
+              text: '확인',
+              backgroundColor: getVerificationPasswordButtonColor(),
+              textColor:
+                  !isPasswordSettingComplete ? Colors.white : Colors.black,
+              onClick: () {
+                if (!isPasswordSettingComplete) flutterDialog();
+              },
             ),
             Expanded(child: Container()),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    color: !isPasswordSettingComplete
-                        ? Colors.grey
-                        : Colors.blueAccent,
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      if (isPasswordSettingComplete) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const JoinStep3Screen(),
-                          ),
-                        );
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.arrow_forward_sharp,
-                      color: Colors.white,
+            NextButtonWidget(
+                isComplete: isPasswordSettingComplete,
+                onClick: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const JoinStep3Screen(),
                     ),
-                  ),
-                ),
-              ],
-            ),
+                  );
+                }),
             const SizedBox(
               height: 50,
             )

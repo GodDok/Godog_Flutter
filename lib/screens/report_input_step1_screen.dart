@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:godog/screens/report_input_step2_screen.dart';
+import '../widgets/next_button_widget.dart';
+import '../widgets/progress_widget.dart';
 
 class ReportInputStep1Screen extends StatefulWidget {
   const ReportInputStep1Screen({super.key});
@@ -168,7 +170,8 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                                       (BuildContext context, int index) {
                                     return GestureDetector(
                                       onTap: () {
-                                        selectDetailIndustry(filteredList[index]);
+                                        selectDetailIndustry(
+                                            filteredList[index]);
                                         Navigator.pop(context);
                                       },
                                       child: Text(
@@ -243,15 +246,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: Column(
           children: [
-            const LinearProgressIndicator(
-              value: 0.5,
-              backgroundColor: Colors.grey,
-              color: Colors.white,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-              minHeight: 2.0,
-              semanticsLabel: 'semanticsLabel',
-              semanticsValue: 'semanticsValue',
-            ),
+            const ProgressWidget(value: 0.5),
             const SizedBox(
               height: 30,
             ),
@@ -387,36 +382,16 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
               children: [...generateIndustry()],
             ),
             Expanded(child: Container()),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  width: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    color: !isCompletedInput ? Colors.grey : Colors.blueAccent,
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      if (isCompletedInput) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const ReportInputStep2Screen(),
-                          ),
-                        );
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.arrow_forward_sharp,
-                      color: Colors.white,
+            NextButtonWidget(
+                isComplete: isCompletedInput,
+                onClick: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ReportInputStep2Screen(),
                     ),
-                  ),
-                ),
-              ],
-            ),
+                  );
+                }),
             const SizedBox(
               height: 50,
             )

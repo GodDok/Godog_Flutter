@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:godog/screens/login_screen.dart';
+import 'package:godog/widgets/report_input_widget.dart';
+import '../widgets/next_button_widget.dart';
+import '../widgets/progress_widget.dart';
 
 class ReportInputStep2Screen extends StatefulWidget {
   const ReportInputStep2Screen({super.key});
@@ -49,379 +53,125 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: Column(
           children: [
-            const LinearProgressIndicator(
-              value: 1.0,
-              backgroundColor: Colors.grey,
-              color: Colors.white,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-              minHeight: 2.0,
-              semanticsLabel: 'semanticsLabel',
-              semanticsValue: 'semanticsValue',
-            ),
+            const ProgressWidget(value: 1.0),
             const SizedBox(
               height: 30,
             ),
-            Row(
-              children: [
-                const Text(
-                  "마진율",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                          labelText: '',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('%'),
-                            ],
-                          )),
-                      onChanged: (value) {
-                        setState(() {
-                          marginRate = value;
-                        });
+            ReportInputWidget(
+                onChanged: (value) {
+                  setState(() {
+                    marginRate = value;
+                  });
 
-                        inputCompleteConfirmation();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                  inputCompleteConfirmation();
+                },
+                suffixText: '%',
+                text: '마진율'),
             const SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                const Text(
-                  "총예산",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                          labelText: '',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('만원'),
-                            ],
-                          )),
-                      onChanged: (value) {
-                        setState(() {
-                          totalBudget = value;
-                        });
+            ReportInputWidget(
+                onChanged: (value) {
+                  setState(() {
+                    totalBudget = value;
+                  });
 
-                        inputCompleteConfirmation();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                  inputCompleteConfirmation();
+                },
+                suffixText: '만원',
+                text: '총예산'),
             const SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                const Text(
-                  "임대료",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                          labelText: '',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('만원'),
-                            ],
-                          )),
-                      onChanged: (value) {
-                        setState(() {
-                          rent = value;
-                        });
+            ReportInputWidget(
+                onChanged: (value) {
+                  setState(() {
+                    rent = value;
+                  });
 
-                        inputCompleteConfirmation();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                  inputCompleteConfirmation();
+                },
+                suffixText: '만원',
+                text: '임대료'),
             const SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                const Text(
-                  "대출금",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                          labelText: '',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('만원'),
-                            ],
-                          )),
-                      onChanged: (value) {
-                        setState(() {
-                          loan = value;
-                        });
-                        inputCompleteConfirmation();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            ReportInputWidget(
+                onChanged: (value) {
+                  setState(() {
+                    loan = value;
+                  });
+
+                  inputCompleteConfirmation();
+                },
+                suffixText: '만원',
+                text: '대출금'),
             const SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                const Text(
-                  "기타경비",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                          labelText: '',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('만원'),
-                            ],
-                          )),
-                      onChanged: (value) {
-                        setState(() {
-                          otherExpenses = value;
-                        });
-                        inputCompleteConfirmation();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            ReportInputWidget(
+                onChanged: (value) {
+                  setState(() {
+                    otherExpenses = value;
+                  });
+
+                  inputCompleteConfirmation();
+                },
+                suffixText: '만원',
+                text: '기타경비'),
             const SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                const Text(
-                  "인건비",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                          labelText: '',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('만원'),
-                            ],
-                          )),
-                      onChanged: (value) {
-                        setState(() {
-                          personnelExpenses = value;
-                        });
-                        inputCompleteConfirmation();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            ReportInputWidget(
+                onChanged: (value) {
+                  setState(() {
+                    personnelExpenses = value;
+                  });
+
+                  inputCompleteConfirmation();
+                },
+                suffixText: '만원',
+                text: '인건비'),
             const SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                const Text(
-                  "월평균 근무일 수",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                          labelText: '',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('일'),
-                            ],
-                          )),
-                      onChanged: (value) {
-                        setState(() {
-                          averageNumberOfWorkingDaysPerMonth = value;
-                        });
-                        inputCompleteConfirmation();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            ReportInputWidget(
+                onChanged: (value) {
+                  setState(() {
+                    averageNumberOfWorkingDaysPerMonth = value;
+                  });
+
+                  inputCompleteConfirmation();
+                },
+                suffixText: '일',
+                text: '월평균 근무일 수'),
             const SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                const Text(
-                  "목표이일(월)",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 50,
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          labelText: '',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('만원'),
-                            ],
-                          )),
-                      onChanged: (value) {
-                        setState(() {
-                          theGoalIs = value;
-                        });
-                        inputCompleteConfirmation();
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            ReportInputWidget(
+                onChanged: (value) {
+                  setState(() {
+                    theGoalIs = value;
+                  });
+
+                  inputCompleteConfirmation();
+                },
+                suffixText: '만원',
+                text: '목표이일(월)'),
             const SizedBox(
               height: 20,
             ),
             Expanded(child: Container()),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  width: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    color: !isCompletedInput ? Colors.grey : Colors.blueAccent,
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-   /*                   if (isCompletedInput) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const ReportInputStep2Screen(),
-                          ),
-                        );
-                      }*/
-                    },
-                    icon: const Icon(
-                      Icons.arrow_forward_sharp,
-                      color: Colors.white,
+            NextButtonWidget(
+                isComplete: isCompletedInput,
+                onClick: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
                     ),
-                  ),
-                ),
-              ],
-            ),
+                  );
+                }),
             const SizedBox(
               height: 50,
             )
