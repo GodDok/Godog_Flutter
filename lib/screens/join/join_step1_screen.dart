@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import '../widgets/basic_text_button_widget.dart';
-import '../widgets/next_button_widget.dart';
-import '../widgets/progress_widget.dart';
+import 'package:godog/screens/join/services/mail_service.dart';
+import '../../core/network_service.dart';
+import '../../widgets/basic_text_button_widget.dart';
+import '../../widgets/next_button_widget.dart';
+import '../../widgets/progress_widget.dart';
 import 'join_step2_screen.dart';
 
 class JoinStep1Screen extends StatefulWidget {
@@ -17,6 +20,34 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
   String certificationNum = ''; // 인증번호
   bool isProgressCertification = false; // 인증 진행 상태 유무
   bool isCompletedCertification = false; // 인증 완료 상태 유무
+
+  late Dio dio;
+  late MailService mailService;
+
+  @override
+  void initState() {
+    super.initState();
+    dio = NetworkService.instance.dio;
+    mailService = MailService(dio);
+  }
+
+  Future<void> mailSend(email) async {
+    final result = await mailService.postMailSend(email);
+
+    if (result) {
+      // 타이머 시작
+      onStartPressed();
+    }
+  }
+
+  Future<void> mailCheck(email, authNum) async {
+    final result = await mailService.postMailCheck(email, authNum);
+
+    if (result) {
+      // 인증 완료 처리
+      flutterDialog();
+    }
+  }
 
   Color getVerificationNumberButtonColor() {
     if (email.isNotEmpty) {
@@ -85,7 +116,6 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
 
   // 인증 번호 확인
   certificationConfirmation() {
-    // 인증 확인 로직 추가할 예정
     setState(() {
       isCompletedCertification = true;
     });
@@ -225,8 +255,8 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
                 backgroundColor: getVerificationNumberButtonColor(),
                 textColor: Colors.white,
                 onClick: () {
-                  // 이메일 인증 보내기 요청할 예정
-                  onStartPressed();
+                  // 이메일 인증 요청
+                  mailSend(email);
 
                   setState(() {
                     isProgressCertification = true;
@@ -240,7 +270,9 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
                 textColor:
                     !isCompletedCertification ? Colors.white : Colors.black,
                 onClick: () {
-                  if (!isCompletedCertification) flutterDialog();
+                  if (!isCompletedCertification) {
+                    mailCheck(email, certificationNum);
+                  }
                 },
               ),
             Expanded(child: Container()),
@@ -250,7 +282,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const JoinStep2Screen(),
+                      builder: (context) => JoinStep2Screen(email),
                     ),
                   );
                 }),

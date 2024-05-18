@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import '../widgets/basic_text_button_widget.dart';
-import '../widgets/next_button_widget.dart';
-import '../widgets/password_input_widget.dart';
-import '../widgets/progress_widget.dart';
+import '../../widgets/basic_text_button_widget.dart';
+import '../../widgets/next_button_widget.dart';
+import '../../widgets/password_input_widget.dart';
+import '../../widgets/progress_widget.dart';
 import 'join_step3_screen.dart';
 
 class JoinStep2Screen extends StatefulWidget {
-  const JoinStep2Screen({super.key});
+  final String email;
+
+  const JoinStep2Screen(this.email, {super.key});
 
   @override
   State<JoinStep2Screen> createState() => _JoinStep2ScreenState();
@@ -186,7 +188,7 @@ class _JoinStep2ScreenState extends State<JoinStep2Screen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const JoinStep3Screen(),
+                      builder: (context) => JoinStep3Screen(widget.email, password),
                     ),
                   );
                 }),

@@ -1,11 +1,17 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
-import 'package:godog/screens/report_input_step1_screen.dart';
-import '../widgets/basic_text_button_widget.dart';
-import '../widgets/progress_widget.dart';
+import 'package:godog/screens/join/services/join_service.dart';
+import '../../core/cache_manager.dart';
+import '../../core/network_service.dart';
+import '../../widgets/basic_text_button_widget.dart';
+import '../../widgets/progress_widget.dart';
+import '../report/report_input_step1_screen.dart';
 
 class JoinStep3Screen extends StatefulWidget {
-  const JoinStep3Screen({super.key});
+  final String email, password;
+
+  const JoinStep3Screen(this.email, this.password, {super.key});
 
   @override
   State<JoinStep3Screen> createState() => _JoinStep3ScreenState();
@@ -14,10 +20,38 @@ class JoinStep3Screen extends StatefulWidget {
 class _JoinStep3ScreenState extends State<JoinStep3Screen> {
   String selectedGender = "";
   String birthday = "";
+  String birthDate = "";
+
+  Future<void> join(String email, String password, String name, String gender,
+      String birthDate) async {
+    final Dio dio = NetworkService.instance.dio;
+    final JoinService joinService = JoinService(dio);
+    final result =
+        await joinService.postSignup(email, password, name, gender, birthDate);
+
+    final cacheManger = CacheManager();
+    cacheManger.saveAccessToken(result.result.accessToken);
+    cacheManger.saveRefreshToken(result.result.refreshToken);
+
+    print("회원가입 성공");
+
+    // 화면 이동
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ReportInputStep1Screen(),
+      ),
+    );
+  }
 
   void _selectGender(String gender) {
     setState(() {
-      selectedGender = gender;
+
+      if (gender == '남자') {
+        selectedGender = "MALE";
+      } else {
+        selectedGender = "FEMALE";
+      }
     });
   }
 
@@ -54,6 +88,8 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                     setState(() {
                       birthday =
                           "${newDate.year}년 ${newDate.month}월 ${newDate.day}일";
+                      birthDate =
+                          "${newDate.year}-${newDate.month}-${newDate.day}";
                     });
                   },
                   pickerTheme: const DateTimePickerTheme(
@@ -135,7 +171,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                         children: [
                           Icon(
                             Icons.check,
-                            color: selectedGender == '남자'
+                            color: selectedGender == "MALE"
                                 ? Colors.blue
                                 : Colors.grey,
                             size: 14,
@@ -144,7 +180,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                           Text(
                             '남자',
                             style: TextStyle(
-                              color: selectedGender == '남자'
+                              color: selectedGender == "MALE"
                                   ? Colors.blue
                                   : Colors.grey,
                               fontWeight: FontWeight.bold,
@@ -164,7 +200,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                             children: [
                               Icon(
                                 Icons.check,
-                                color: selectedGender == '여자'
+                                color: selectedGender == "FEMALE"
                                     ? Colors.blue
                                     : Colors.grey,
                                 size: 14,
@@ -173,7 +209,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                               Text(
                                 '여자',
                                 style: TextStyle(
-                                  color: selectedGender == '여자'
+                                  color: selectedGender == "FEMALE"
                                       ? Colors.blue
                                       : Colors.grey,
                                   fontWeight: FontWeight.bold,
@@ -228,12 +264,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
               backgroundColor: getButtonColor(),
               textColor: Colors.white,
               onClick: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ReportInputStep1Screen(),
-                  ),
-                );
+                join(widget.email, widget.password, "test", selectedGender, birthDate);
               },
             ),
             const SizedBox(

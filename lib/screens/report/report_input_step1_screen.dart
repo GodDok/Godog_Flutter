@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:godog/screens/report_input_step2_screen.dart';
-import '../widgets/next_button_widget.dart';
-import '../widgets/progress_widget.dart';
+import 'package:godog/screens/report/report_input_step2_screen.dart';
+
+import '../../widgets/next_button_widget.dart';
+import '../../widgets/progress_widget.dart';
 
 class ReportInputStep1Screen extends StatefulWidget {
   const ReportInputStep1Screen({super.key});

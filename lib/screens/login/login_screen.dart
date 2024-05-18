@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:godog/screens/report_input_step1_screen.dart';
+import 'package:godog/screens/login/services/login_service.dart';
 import 'package:godog/widgets/password_input_widget.dart';
-import '../widgets/basic_text_button_widget.dart';
-import 'join_step1_screen.dart';
+import '../../core/cache_manager.dart';
+import '../../core/network_service.dart';
+import '../../widgets/basic_text_button_widget.dart';
+import '../join/join_step1_screen.dart';
+import '../report/report_input_step1_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +19,26 @@ class _LoginScreenState extends State<LoginScreen> {
   String email = '';
   String password = '';
   bool obscureText = true;
+
+  Future<void> login(email, password) async {
+    final Dio dio = NetworkService.instance.dio;
+    final LoginService loginService = LoginService(dio);
+    final result = await loginService.postLogin(email, password);
+
+    final cacheManger = CacheManager();
+    cacheManger.saveAccessToken(result.result.accessToken);
+    cacheManger.saveRefreshToken(result.result.refreshToken);
+
+    print("로그인 성공");
+
+    // 화면 이동
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ReportInputStep1Screen(),
+      ),
+    );
+  }
 
   Color getButtonColor() {
     if (email.isNotEmpty && password.isNotEmpty) {
@@ -87,12 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
               backgroundColor: getButtonColor(),
               textColor: Colors.white,
               onClick: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ReportInputStep1Screen(),
-                  ),
-                );
+                login(email, password);
               },
             ),
             const SizedBox(
