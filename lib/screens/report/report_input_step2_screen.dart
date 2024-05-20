@@ -1,11 +1,20 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:godog/screens/login/login_screen.dart';
+import 'package:godog/screens/report/services/report_service.dart';
 import 'package:godog/widgets/report_input_widget.dart';
+import '../../core/network_service.dart';
 import '../../widgets/next_button_widget.dart';
 import '../../widgets/progress_widget.dart';
 
 class ReportInputStep2Screen extends StatefulWidget {
-  const ReportInputStep2Screen({super.key});
+  final String city;
+  final String province;
+  final String neighborhood;
+  final String category;
+
+  const ReportInputStep2Screen(
+      this.city, this.province, this.neighborhood, this.category,
+      {super.key});
 
   @override
   State<ReportInputStep2Screen> createState() => _ReportInputStep2ScreenState();
@@ -21,6 +30,26 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
   String? personnelExpenses;
   String? averageNumberOfWorkingDaysPerMonth;
   String? theGoalIs;
+
+  createReport() async {
+    final Dio dio = NetworkService.instance.dio;
+    final ReportService reportService = ReportService(dio);
+    final result = await reportService.postReport(
+        marginRate!,
+        totalBudget!,
+        rent!,
+        loan!,
+        otherExpenses!,
+        personnelExpenses!,
+        averageNumberOfWorkingDaysPerMonth!,
+        theGoalIs!,
+        widget.city,
+        widget.province,
+        widget.neighborhood,
+        widget.category);
+
+    print("저장 완료");
+  }
 
   inputCompleteConfirmation() {
     // 입력 완료 여부 확인
@@ -165,12 +194,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
             NextButtonWidget(
                 isComplete: isCompletedInput,
                 onClick: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  );
+                  createReport();
                 }),
             const SizedBox(
               height: 50,

@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:godog/screens/report/report_input_step2_screen.dart';
-
+import 'package:godog/screens/report/services/report_service.dart';
+import '../../core/network_service.dart';
 import '../../widgets/next_button_widget.dart';
 import '../../widgets/progress_widget.dart';
 
@@ -46,25 +48,50 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
     "평거동"
   ];
 
-  var industryList = [
-    "소비",
-    "음식",
-    "수리・개인",
+  // 대분류 업종
+  var category = [
+    "과학·기술",
     "교육",
-    "부동산",
-    "예술・스포츠",
-    "숙박",
-    "과학・기술",
     "보건의료",
-    "시설관리・임대"
+    "부동산",
+    "소매",
+    "수리·개인",
+    "숙박",
+    "시설관리·임대",
+    "예술·스포츠",
+    "음식"
   ];
+
+  // 소분류 업종
+  var industryList = [""];
 
   List<String> filteredList = [];
 
+  final Dio dio = NetworkService.instance.dio;
+
+  getCity() async {
+    final ReportService reportService = ReportService(dio);
+    final cityResult = await reportService.getCity();
+
+    setState(() {
+      provinceList = cityResult.result;
+    });
+  }
+
+  getCategory() async {
+    final ReportService reportService = ReportService(dio);
+    final categoryResult = await reportService.getCategory();
+
+    setState(() {
+      category = categoryResult.result;
+    });
+  }
+
   @override
-  void initState() {
+  initState() {
     super.initState();
-    filteredList = industryList;
+    getCity();
+    getCategory();
   }
 
   String? detailIndustry;
@@ -83,13 +110,25 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
     setState(() {
       this.city = city;
       province = null;
+      neighborhoodList = [];
       neighborhood = null;
     });
 
     inputCompleteConfirmation();
   }
 
+  getDistrict(String province) async {
+    final ReportService reportService = ReportService(dio);
+    final districtResult = await reportService.getDistrict(province);
+
+    setState(() {
+      neighborhoodList = districtResult.result;
+    });
+  }
+
   void handleProvinceSelection(String province) {
+    getDistrict(province);
+
     setState(() {
       this.province = province;
       neighborhood = null;
@@ -107,7 +146,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
   }
 
   generateIndustry() {
-    return industryList.map((tag) => getChip(tag)).toList();
+    return category.map((tag) => getChip(tag)).toList();
   }
 
   selectDetailIndustry(String selectedIndustry) {
@@ -118,95 +157,104 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
     inputCompleteConfirmation();
   }
 
+  getStore(String type) async {
+    final ReportService reportService = ReportService(dio);
+    var result = await reportService.getStore(type);
+
+    setState(() {
+      industryList = result.result;
+      filteredList = industryList;
+
+      showModalBottomSheet(
+          backgroundColor: Colors.white,
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(
+              builder: (BuildContext context, StateSetter bottomState) {
+                return SizedBox(
+                  height: 600,
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: '상세 업종을 입력하세요',
+                            border: const OutlineInputBorder(),
+                            suffixIcon: GestureDetector(
+                              child: const Icon(
+                                Icons.search,
+                              ),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            bottomState(() {
+                              setState(() {
+                                filteredList = industryList
+                                    .where((item) => item
+                                        .toLowerCase()
+                                        .contains(value.toLowerCase()))
+                                    .toList();
+                              });
+                            });
+                          },
+                        ),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        Expanded(
+                          child: ListView.separated(
+                              itemBuilder: (BuildContext context, int index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    selectDetailIndustry(filteredList[index]);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    filteredList[index],
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: Colors.black),
+                                  ),
+                                );
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const Column(children: [
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Divider(
+                                          height: 1,
+                                          color: Colors.grey,
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        )
+                                      ]),
+                              itemCount: filteredList.length),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          });
+    });
+  }
+
   getChip(name) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
         onTap: () {
           setState(() {
+            getStore(name);
             industry = name;
           });
-
-          showModalBottomSheet(
-              backgroundColor: Colors.white,
-              context: context,
-              builder: (BuildContext context) {
-                return StatefulBuilder(
-                  builder: (BuildContext context, StateSetter bottomState) {
-                    return SizedBox(
-                      height: 600,
-                      width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: '상세 업종을 입력하세요',
-                                border: const OutlineInputBorder(),
-                                suffixIcon: GestureDetector(
-                                  child: const Icon(
-                                    Icons.search,
-                                  ),
-                                ),
-                              ),
-                              onChanged: (value) {
-                                bottomState(() {
-                                  setState(() {
-                                    filteredList = industryList
-                                        .where((item) => item
-                                            .toLowerCase()
-                                            .contains(value.toLowerCase()))
-                                        .toList();
-                                  });
-                                });
-                              },
-                            ),
-                            const SizedBox(
-                              height: 50,
-                            ),
-                            Expanded(
-                              child: ListView.separated(
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        selectDetailIndustry(
-                                            filteredList[index]);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        filteredList[index],
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: Colors.black),
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) =>
-                                          const Column(children: [
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Divider(
-                                              height: 1,
-                                              color: Colors.grey,
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            )
-                                          ]),
-                                  itemCount: filteredList.length),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              });
 
           inputCompleteConfirmation();
         },
@@ -389,7 +437,11 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ReportInputStep2Screen(),
+                      builder: (context) => ReportInputStep2Screen(
+                          "경남",
+                          this.province!,
+                          this.neighborhood!,
+                          this.detailIndustry!),
                     ),
                   );
                 }),
