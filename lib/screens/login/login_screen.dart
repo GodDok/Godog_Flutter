@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:godog/screens/report_input_step1_screen.dart';
-
-import '../widgets/password_toggle_widget.dart';
-import 'join_step1_screen.dart';
+import 'package:godog/screens/login/services/login_service.dart';
+import 'package:godog/widgets/password_input_widget.dart';
+import '../../core/cache_manager.dart';
+import '../../core/network_service.dart';
+import '../../widgets/basic_text_button_widget.dart';
+import '../join/join_step1_screen.dart';
+import '../report/report_input_step1_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +20,26 @@ class _LoginScreenState extends State<LoginScreen> {
   String password = '';
   bool obscureText = true;
 
+  Future<void> login(email, password) async {
+    final Dio dio = NetworkService.instance.dio;
+    final LoginService loginService = LoginService(dio);
+    final result = await loginService.postLogin(email, password);
+
+    final cacheManger = CacheManager();
+    cacheManger.saveAccessToken(result.result.accessToken);
+    cacheManger.saveRefreshToken(result.result.refreshToken);
+
+    print("로그인 성공");
+
+    // 화면 이동
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ReportInputStep1Screen(),
+      ),
+    );
+  }
+
   Color getButtonColor() {
     if (email.isNotEmpty && password.isNotEmpty) {
       return Colors.blue;
@@ -23,8 +47,6 @@ class _LoginScreenState extends State<LoginScreen> {
       return Colors.grey;
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -69,19 +91,14 @@ class _LoginScreenState extends State<LoginScreen> {
               },
             ),
             const SizedBox(height: 20.0),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: '비밀번호',
-                border: OutlineInputBorder(),
-                suffixIcon: PasswordToggle(
-                  onChanged: (value) {
-                    setState(() {
-                      obscureText = value; // 상태 동기화
-                    });
-                  },
-                ),
-              ),
-              obscureText: obscureText,
+            PasswordInputWidget(
+              label: '비밀번호',
+              passwordCheckObscureText: obscureText,
+              suffixClick: (value) {
+                setState(() {
+                  obscureText = value; // 상태 동기화
+                });
+              },
               onChanged: (value) {
                 setState(() {
                   password = value;
@@ -89,32 +106,13 @@ class _LoginScreenState extends State<LoginScreen> {
               },
             ),
             const SizedBox(height: 20.0),
-            SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: ElevatedButton(
-                style: TextButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    backgroundColor: getButtonColor()),
-                onPressed: () {
-                  // 로그인 버튼 눌렀을 때 실행할 동작
-                  // 테스트용으로 리포트 검사 화면으로 이동
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ReportInputStep1Screen(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  '로그인',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
+            BasicTextButtonWidget(
+              text: '로그인',
+              backgroundColor: getButtonColor(),
+              textColor: Colors.white,
+              onClick: () {
+                login(email, password);
+              },
             ),
             const SizedBox(
               height: 10,

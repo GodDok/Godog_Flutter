@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PasswordToggle extends StatefulWidget {
   final ValueChanged<bool> onChanged;
 
-  const PasswordToggle({Key? key, required this.onChanged}) : super(key: key);
+  const PasswordToggle({super.key, required this.onChanged});
 
   @override
   _PasswordToggleState createState() => _PasswordToggleState();

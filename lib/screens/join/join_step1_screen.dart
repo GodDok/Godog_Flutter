@@ -1,7 +1,11 @@
 import 'dart:async';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
+import 'package:godog/screens/join/services/mail_service.dart';
+import '../../core/network_service.dart';
+import '../../widgets/basic_text_button_widget.dart';
+import '../../widgets/next_button_widget.dart';
+import '../../widgets/progress_widget.dart';
 import 'join_step2_screen.dart';
 
 class JoinStep1Screen extends StatefulWidget {
@@ -16,6 +20,34 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
   String certificationNum = ''; // 인증번호
   bool isProgressCertification = false; // 인증 진행 상태 유무
   bool isCompletedCertification = false; // 인증 완료 상태 유무
+
+  late Dio dio;
+  late MailService mailService;
+
+  @override
+  void initState() {
+    super.initState();
+    dio = NetworkService.instance.dio;
+    mailService = MailService(dio);
+  }
+
+  Future<void> mailSend(email) async {
+    final result = await mailService.postMailSend(email);
+
+    if (result) {
+      // 타이머 시작
+      onStartPressed();
+    }
+  }
+
+  Future<void> mailCheck(email, authNum) async {
+    final result = await mailService.postMailCheck(email, authNum);
+
+    if (result) {
+      // 인증 완료 처리
+      flutterDialog();
+    }
+  }
 
   Color getVerificationNumberButtonColor() {
     if (email.isNotEmpty) {
@@ -84,13 +116,12 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
 
   // 인증 번호 확인
   certificationConfirmation() {
-    // 인증 확인 로직 추가할 예정
     setState(() {
       isCompletedCertification = true;
     });
   }
 
-  void FlutterDialog() {
+  void flutterDialog() {
     showDialog(
         context: context,
         //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
@@ -150,15 +181,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: Column(
           children: [
-            const LinearProgressIndicator(
-              value: 0.3,
-              backgroundColor: Colors.grey,
-              color: Colors.white,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-              minHeight: 2.0,
-              semanticsLabel: 'semanticsLabel',
-              semanticsValue: 'semanticsValue',
-            ),
+            const ProgressWidget(value: 0.3),
             const SizedBox(
               height: 30,
             ),
@@ -227,86 +250,42 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
               ),
             const SizedBox(height: 20.0),
             if (!isProgressCertification)
-              SizedBox(
-                width: double.infinity,
-                height: 60,
-                child: ElevatedButton(
-                  style: TextButton.styleFrom(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                      backgroundColor: getVerificationNumberButtonColor()),
-                  onPressed: () {
-                    // 이메일 인증 보내기 요청할 예정
-                    onStartPressed();
+              BasicTextButtonWidget(
+                text: '인증번호 받기',
+                backgroundColor: getVerificationNumberButtonColor(),
+                textColor: Colors.white,
+                onClick: () {
+                  // 이메일 인증 요청
+                  mailSend(email);
 
-                    setState(() {
-                      isProgressCertification = true;
-                    });
-                  },
-                  child: const Text(
-                    '인증번호 받기',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                  setState(() {
+                    isProgressCertification = true;
+                  });
+                },
               )
             else
-              SizedBox(
-                width: double.infinity,
-                height: 60,
-                child: ElevatedButton(
-                  style: TextButton.styleFrom(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                      backgroundColor: getVerificationButtonColor()),
-                  onPressed: () {
-                    if (!isCompletedCertification) FlutterDialog();
-                  },
-                  child: Text(
-                    !isCompletedCertification ? '인증' : '완료',
-                    style: TextStyle(
-                        color: !isCompletedCertification
-                            ? Colors.white
-                            : Colors.black),
-                  ),
-                ),
+              BasicTextButtonWidget(
+                text: !isCompletedCertification ? '인증' : '완료',
+                backgroundColor: getVerificationButtonColor(),
+                textColor:
+                    !isCompletedCertification ? Colors.white : Colors.black,
+                onClick: () {
+                  if (!isCompletedCertification) {
+                    mailCheck(email, certificationNum);
+                  }
+                },
               ),
             Expanded(child: Container()),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    color: !isCompletedCertification
-                        ? Colors.grey
-                        : Colors.blueAccent,
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      if (isCompletedCertification) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const JoinStep2Screen(),
-                          ),
-                        );
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.arrow_forward_sharp,
-                      color: Colors.white,
+            NextButtonWidget(
+                isComplete: isCompletedCertification,
+                onClick: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => JoinStep2Screen(email),
                     ),
-                  ),
-                ),
-              ],
-            ),
+                  );
+                }),
             const SizedBox(
               height: 50,
             )

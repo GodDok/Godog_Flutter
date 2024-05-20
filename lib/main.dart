@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:godog/screens/start_screen.dart';
+import 'package:godog/screens/start/start_screen.dart';
 
 void main() {
   runApp(const App());

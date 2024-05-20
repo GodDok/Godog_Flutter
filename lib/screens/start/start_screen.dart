@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
+import '../../widgets/basic_text_button_widget.dart';
+import '../login/login_screen.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
@@ -39,30 +40,18 @@ class StartScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
-              width: double.infinity,
-              height: 60,
-              child: ElevatedButton(
-                style: TextButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                    backgroundColor: Colors.blueAccent),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                        fullscreenDialog: true),
-                  );
-                },
-                child: const Text(
-                  '로그인',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-              ),
+            BasicTextButtonWidget(
+              text: '로그인',
+              backgroundColor: Colors.blueAccent,
+              textColor: Colors.white,
+              onClick: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                      fullscreenDialog: true),
+                );
+              },
             ),
             const SizedBox(
               height: 50,
