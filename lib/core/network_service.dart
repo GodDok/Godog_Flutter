@@ -13,7 +13,7 @@ class NetworkService {
     return _instace!;
   }
 
-  final String _baseUrl = 'http://10.0.2.2:8080';
+  final String _baseUrl = 'http://52.78.101.153:8080';
   late final Dio dio;
 
   NetworkService._init() {
