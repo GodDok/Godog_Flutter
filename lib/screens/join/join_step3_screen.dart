@@ -21,6 +21,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
   String selectedGender = "";
   String birthday = "";
   String birthDate = "";
+  String name = "";
 
   Future<void> join(String email, String password, String name, String gender,
       String birthDate) async {
@@ -46,7 +47,6 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
 
   void _selectGender(String gender) {
     setState(() {
-
       if (gender == '남자') {
         selectedGender = "MALE";
       } else {
@@ -97,10 +97,8 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                         day = "0${newDate.day}";
                       }
 
-                      birthday =
-                          "${newDate.year}년 $month월 $day일";
-                      birthDate =
-                          "${newDate.year}-$month-$day";
+                      birthday = "${newDate.year}년 $month월 $day일";
+                      birthDate = "${newDate.year}-$month-$day";
                     });
                   },
                   pickerTheme: const DateTimePickerTheme(
@@ -162,6 +160,35 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
               ],
             ),
             const SizedBox(height: 20.0),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              const Text(
+                '이름',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+                SizedBox(
+                  height: 50,
+                  width: 150,
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.next,
+                    onChanged: (value) {
+                      setState(() {
+                        name = value;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      labelText: '',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+            ]),
+            const SizedBox(
+              height: 40,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -275,7 +302,8 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
               backgroundColor: getButtonColor(),
               textColor: Colors.white,
               onClick: () {
-                join(widget.email, widget.password, "test", selectedGender, birthDate);
+                join(widget.email, widget.password, name, selectedGender,
+                    birthDate);
               },
             ),
             const SizedBox(
