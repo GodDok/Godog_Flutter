@@ -86,10 +86,21 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                   locale: DatePicker.localeFromString('en'),
                   onChange: (DateTime newDate, _) {
                     setState(() {
+                      var month = newDate.month.toString();
+                      var day = newDate.day.toString();
+
+                      if (newDate.month.toString().length == 1) {
+                        month = "0${newDate.month}";
+                      }
+
+                      if (newDate.day.toString().length == 1) {
+                        day = "0${newDate.day}";
+                      }
+
                       birthday =
-                          "${newDate.year}년 ${newDate.month}월 ${newDate.day}일";
+                          "${newDate.year}년 $month월 $day일";
                       birthDate =
-                          "${newDate.year}-${newDate.month}-${newDate.day}";
+                          "${newDate.year}-$month-$day";
                     });
                   },
                   pickerTheme: const DateTimePickerTheme(
