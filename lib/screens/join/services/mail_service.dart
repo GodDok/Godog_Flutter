@@ -15,7 +15,7 @@ class MailService extends IMailService {
 
   @override
   Future<bool> postMailSend(String email) async {
-    final response = await dio.post("/mailsend",
+    final response = await dio.post("api/v1/mailsend",
         data: {'email': email},
         options: Options(contentType: Headers.jsonContentType));
 
@@ -28,7 +28,7 @@ class MailService extends IMailService {
 
   @override
   Future<bool> postMailCheck(String email, String authNum) async {
-    final response = await dio.post("/mailauthCheck",
+    final response = await dio.post("api/v1/mailauthCheck",
         data: {'email': email, 'authNum': authNum},
         options: Options(contentType: Headers.jsonContentType));
 
