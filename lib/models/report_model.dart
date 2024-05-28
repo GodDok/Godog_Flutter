@@ -28,18 +28,18 @@ class Result {
   final String type;
 
   Result.fromJson(Map<String, dynamic> json)
-      : marginRate = json['marginRate'],
-        totalBudget = json['totalBudget'],
-        rent = json['rent'],
-        loanAmount = json['loanAmount'],
-        otherExpenses = json['otherExpenses'],
-        wages = json['wages'],
-        avgWorkingDaysPerMonth = json['avgWorkingDaysPerMonth'],
-        monthlyProfitTarget = json['monthlyProfitTarget'],
-        location = json['location'],
-        city = json['city'],
-        district = json['district'],
-        category = json['category'],
-        subcategory = json['subcategory'],
-        type = json['type'];
+      : marginRate = json['marginRate'].toString(),
+        totalBudget = json['totalBudget'].toString(),
+        rent = json['rent'].toString(),
+        loanAmount = json['loanAmount'].toString(),
+        otherExpenses = json['otherExpenses'].toString(),
+        wages = json['wages'].toString(),
+        avgWorkingDaysPerMonth = json['avgWorkingDaysPerMonth'].toString(),
+        monthlyProfitTarget = json['monthlyProfitTarget'].toString(),
+        location = json['location'].toString(),
+        city = json['city'].toString(),
+        district = json['district'].toString(),
+        category = json['category'].toString(),
+        subcategory = json['subcategory'].toString(),
+        type = json['type'].toString();
 }
