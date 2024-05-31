@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:godog/screens/home/home_screen.dart';
 import 'package:godog/screens/report/services/report_service.dart';
 import 'package:godog/widgets/report_input_widget.dart';
 import '../../core/network_service.dart';
@@ -49,6 +50,13 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
         widget.category);
 
     print("저장 완료");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
+    );
   }
 
   inputCompleteConfirmation() {
