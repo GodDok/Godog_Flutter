@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:godog/screens/board/board_list_screen.dart';
 import 'package:godog/screens/home/home_screen.dart';
 import 'package:godog/screens/start/start_screen.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
@@ -15,7 +16,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: HomeScreen(),
+      home: BoardListScreen()
     );
   }
 }
