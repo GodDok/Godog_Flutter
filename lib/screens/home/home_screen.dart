@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:godog/core/network_service.dart';
 import 'package:godog/models/policy_model.dart';
 import 'package:godog/screens/home/services/home_service.dart';
 import 'package:godog/screens/map/map_screen.dart';
 import 'package:godog/widgets/home_widget/jindanbutton.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:godog/models/population_model.dart'; // PopulationData 모델 클래스 가져오기
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,11 +30,17 @@ class _MyWidgetState extends State<HomeScreen> {
   final List<int> femaleData = [];
 
   List<Content>? contents;
+  PopulationData? populationData; // PopulationData 변수 추가
+  int selectedYear = 2024; // 기본값을 2024년으로 설정
+  List<int> availableYears = [2022, 2023, 2024]; // 선택 가능한 연도 리스트
 
-  getPolicys() async {
+  double yearRate = 0.0;
+  double quarterRate = 0.0;
+
+  getPolicys(String province) async {
     final Dio dio = Dio(BaseOptions(baseUrl: 'http://52.78.101.153:8081'));
     final HomeService homeService = HomeService(dio);
-    final result = await homeService.getPolicys();
+    final result = await homeService.getPolicys(province);
     if (result != null) {
       contents = result.content;
     }
@@ -47,24 +53,9 @@ class _MyWidgetState extends State<HomeScreen> {
     final result = await homeService.getPopulation();
     print(result?.result.first.ageGroup.toString());
     if (result != null) {
-      final list = result.result;
-
-      for (int i = 1; i < list.length - 1; i++) {
-        maleData.add(list[i].maleCount);
-        femaleData.add(list[i].femaleCount);
-        int temp = 0;
-        if (list[i].maleCount >= list[i].femaleCount) {
-          temp = list[i].maleCount;
-        } else {
-          temp = list[i].femaleCount;
-        }
-        if (maxY <= temp) {
-          maxY = temp;
-        }
-      }
+      populationData = result; // PopulationData 저장
+      updateDataForYear(selectedYear); // 기본 연도로 데이터 업데이트
     }
-    maxY = roundUpToTenThousand(maxY);
-    print(maxY);
     setState(() {});
   }
 
@@ -108,6 +99,51 @@ class _MyWidgetState extends State<HomeScreen> {
     setState(() {});
   }
 
+  getCompetitionRates() async {
+    final Dio dio = NetworkService.instance.dio;
+    final HomeService homeService = HomeService(dio);
+
+    final yearRateResult = await homeService.getCompetitionYearRate();
+    final quarterRateResult = await homeService.getCompetitionQuarterRate();
+
+    if (yearRateResult != null) {
+      yearRate = double.parse(yearRateResult.result);
+    }
+
+    if (quarterRateResult != null) {
+      quarterRate = double.parse(quarterRateResult.result);
+    }
+
+    setState(() {});
+  }
+
+  void updateDataForYear(int year) {
+    maleData.clear();
+    femaleData.clear();
+    if (populationData != null) {
+      final list = populationData!.result
+          .where((record) => record.yearAndMonth.contains(year.toString()))
+          .toList();
+
+      for (int i = 1; i < list.length - 1; i++) {
+        maleData.add(list[i].maleCount);
+        femaleData.add(list[i].femaleCount);
+        int temp = 0;
+        if (list[i].maleCount >= list[i].femaleCount) {
+          temp = list[i].maleCount;
+        } else {
+          temp = list[i].femaleCount;
+        }
+        if (maxY <= temp) {
+          maxY = temp;
+        }
+      }
+    }
+    maxY = roundUpToTenThousand(maxY);
+    print(maxY);
+    setState(() {});
+  }
+
   int roundUpToTenThousand(int value) {
     int factor = 10000;
     return (value + factor - 1) ~/ factor * factor;
@@ -116,11 +152,12 @@ class _MyWidgetState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    getPolicys();
+    getPolicys("진주시");
     getPopulation();
     getBreakEven();
     getCountCity();
     getCountAverage();
+    getCompetitionRates();
   }
 
   int maxY = 0;
@@ -134,6 +171,7 @@ class _MyWidgetState extends State<HomeScreen> {
   int averageCount = 0;
 
   String apptitle = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -242,12 +280,30 @@ class _MyWidgetState extends State<HomeScreen> {
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
-                        )
+                        ),
                       ],
                     ),
                     const Divider(
                       color: Colors.grey,
                       thickness: 1,
+                    ),
+                    const SizedBox(
+                      height: 3,
+                    ),
+                    DropdownButton<int>(
+                      value: selectedYear,
+                      items: availableYears.map((int year) {
+                        return DropdownMenuItem<int>(
+                          value: year,
+                          child: Text(year.toString()),
+                        );
+                      }).toList(),
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          selectedYear = newValue!;
+                          updateDataForYear(selectedYear);
+                        });
+                      },
                     ),
                     const SizedBox(
                       height: 20,
@@ -429,7 +485,7 @@ class _MyWidgetState extends State<HomeScreen> {
                         Row(
                           children: [
                             const Text(
-                              '∙   고정비계    :  ',
+                              '∙ 고 정 비 계   :  ',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -514,8 +570,8 @@ class _MyWidgetState extends State<HomeScreen> {
                                   const TextSpan(text: '본 점포의 손익 분기점은 '),
                                   TextSpan(
                                     text: breakEvenAmount,
-                                    style: const TextStyle(
-                                        color: Colors.orange), // 주황색으로 변경
+                                    style:
+                                        const TextStyle(color: Colors.orange),
                                   ),
                                   const TextSpan(text: ' 만원입니다.'),
                                 ],
@@ -536,8 +592,7 @@ class _MyWidgetState extends State<HomeScreen> {
                               const TextSpan(text: '일 평균 '),
                               TextSpan(
                                 text: '$minimumOperatingAmount만원',
-                                style: const TextStyle(
-                                    color: Colors.orange), // 숫자 부분 오렌지 색상 적용
+                                style: const TextStyle(color: Colors.orange),
                               ),
                               const TextSpan(
                                   text:
@@ -603,7 +658,7 @@ class _MyWidgetState extends State<HomeScreen> {
                           height: 20, // 구분선 위 아래로 추가되는 공간의 높이입니다.
                         ),
                         const SizedBox(
-                          height: 30,
+                          height: 8,
                         ),
                         Container(
                           width: double.infinity,
@@ -617,17 +672,19 @@ class _MyWidgetState extends State<HomeScreen> {
                               children: [
                                 const Text('업소수',
                                     style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600)),
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w900)),
                                 const SizedBox(
-                                  height: 70,
+                                  height: 30,
                                 ),
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Text(cityCount.toString(),
                                             style: const TextStyle(
@@ -652,16 +709,14 @@ class _MyWidgetState extends State<HomeScreen> {
                                                 color: Colors.black)),
                                       ],
                                     ),
-                                    const SizedBox(
-                                      width: 30,
-                                    ),
+                                    const SizedBox(width: 20),
                                     Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Text(averageCount.toString(),
                                             style: const TextStyle(
-                                                fontSize: 13,
+                                                fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black)),
                                         const SizedBox(
@@ -672,7 +727,7 @@ class _MyWidgetState extends State<HomeScreen> {
                                           height: averageCount.toDouble() *
                                               10, // 막대의 높이
                                           color: const Color.fromARGB(
-                                              255, 107, 112, 117),
+                                              255, 73, 78, 83),
                                         ),
                                         const SizedBox(
                                           height: 10,
@@ -698,44 +753,73 @@ class _MyWidgetState extends State<HomeScreen> {
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.black, width: 0.4),
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(30),
+                          child: Padding(
+                            padding: const EdgeInsets.all(30),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('증감율',
+                                const Text('증감율',
                                     style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 22,
                                         fontWeight: FontWeight.bold)),
-                                SizedBox(
-                                  height: 20,
-                                ),
+                                const SizedBox(height: 40),
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
                                       children: [
-                                        Text('58',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black)),
-                                        SizedBox(
-                                          height: 20,
+                                        yearRate >= 0
+                                            ? Image.asset(
+                                                'assets/images/up_arrow.png',
+                                                width: 70,
+                                                height: 80)
+                                            : Image.asset(
+                                                'assets/images/down_arrow.png',
+                                                width: 70,
+                                                height: 80),
+                                        const SizedBox(height: 20),
+                                        Text(
+                                          '${yearRate.toInt()}%',
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text('가좌동',
+                                        const SizedBox(height: 10),
+                                        const Text('작년대비 증감율',
                                             style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.black)),
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                    const SizedBox(width: 30),
+                                    Column(
+                                      children: [
+                                        quarterRate >= 0
+                                            ? Image.asset(
+                                                'assets/images/up_arrow.png',
+                                                width: 70,
+                                                height: 80)
+                                            : Image.asset(
+                                                'assets/images/down_arrow.png',
+                                                width: 70,
+                                                height: 80),
+                                        const SizedBox(height: 20),
+                                        Text(
+                                          '${quarterRate.toInt()}%',
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        const Text('분기별 증감율',
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold)),
                                       ],
                                     ),
                                   ],
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -760,7 +844,6 @@ class _MyWidgetState extends State<HomeScreen> {
                           ],
                         ),
                         const Divider(
-                          // 구분선 추가
                           color: Colors.grey, // 구분선의 색상을 설정합니다.
                           thickness: 1, // 구분선의 두께를 설정합니다.
                         ),
@@ -787,8 +870,6 @@ Future<void> _launchUrl(String urlString) async {
     }
   } catch (e) {
     print('Exception caught: $e');
-    // 이 부분에서 유저 인터페이스를 통해 사용자에게 정보를 제공할 수 있습니다.
-    // 예: 오류 메시지를 표시하는 대화 상자 띄우기
   }
 }
 
@@ -805,7 +886,7 @@ Widget policySection(List<Content>? contents) {
                 return Column(
                   children: [
                     policyButton(contents[index]),
-                    const SizedBox(height: 17), // 여기에서 간격 조절
+                    const SizedBox(height: 10),
                   ],
                 );
               },
@@ -839,7 +920,7 @@ Widget policyButton(Content content) {
           children: [
             Text(content.title,
                 style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             const SizedBox(height: 10),
