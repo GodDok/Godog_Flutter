@@ -94,6 +94,7 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           "주변상가 찾기",
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
