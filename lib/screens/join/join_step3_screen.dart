@@ -31,8 +31,8 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
         await joinService.postSignup(email, password, name, gender, birthDate);
 
     final cacheManger = CacheManager();
-    cacheManger.saveAccessToken(result.result.accessToken);
-    cacheManger.saveRefreshToken(result.result.refreshToken);
+    await cacheManger.saveAccessToken(result.result.accessToken);
+    await cacheManger.saveRefreshToken(result.result.refreshToken);
 
     print("회원가입 성공");
 

@@ -49,8 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final result = await loginService.postLogin(email, password);
 
     final cacheManger = CacheManager();
-    cacheManger.saveAccessToken(result.result.accessToken);
-    cacheManger.saveRefreshToken(result.result.refreshToken);
+    await cacheManger.saveAccessToken(result.result.accessToken);
+    await cacheManger.saveRefreshToken(result.result.refreshToken);
 
     print("로그인 성공");
     navigate(context);

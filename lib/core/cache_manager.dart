@@ -15,7 +15,7 @@ class CacheManager {
 
   Future<bool> saveReport(bool isReportCompleted) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(CacheManagerKey.REFRESH_TOKEN.toString(), isReportCompleted);
+    await prefs.setBool(CacheManagerKey.REPORT.toString(), isReportCompleted);
     return true;
   }
 

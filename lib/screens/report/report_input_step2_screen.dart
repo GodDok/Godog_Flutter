@@ -53,7 +53,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
     print("저장 완료");
 
     final cacheManger = CacheManager();
-    cacheManger.saveReport(true);
+    await cacheManger.saveReport(true);
 
     Navigator.push(
       context,

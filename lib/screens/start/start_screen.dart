@@ -12,6 +12,8 @@ class StartScreen extends StatelessWidget {
     final accessToken = await CacheManager().getAccessToken();
     final isReportCompleted = await CacheManager().getReport();
 
+    print(isReportCompleted);
+
     if (accessToken != null) {
       if (isReportCompleted != null && isReportCompleted) {
         Navigator.pushReplacement(
