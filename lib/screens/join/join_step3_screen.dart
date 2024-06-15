@@ -172,7 +172,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                   height: 50,
                   width: 150,
                   child: TextFormField(
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
                     onChanged: (value) {
                       setState(() {
