@@ -22,6 +22,7 @@ class PasswordInputWidget extends StatelessWidget {
       obscureText: passwordCheckObscureText,
       decoration: InputDecoration(
         labelText: label,
+        floatingLabelStyle: TextStyle(color: Colors.blueAccent),
         border: const OutlineInputBorder(),
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.blueAccent),

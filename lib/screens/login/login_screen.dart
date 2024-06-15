@@ -109,6 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
+                floatingLabelStyle: TextStyle(color: Colors.blueAccent),
                 labelText: '이메일',
                 border: OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(

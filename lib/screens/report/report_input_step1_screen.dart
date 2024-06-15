@@ -221,11 +221,12 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: '상세 업종을 입력하세요',
+                              floatingLabelStyle: const TextStyle(color: Colors.blueAccent),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blueAccent), // 포커스됐을 때 테두리 색상
+                                borderSide: BorderSide(color: Colors.blueAccent),
                               ),
                               suffixIcon: const Icon(Icons.search),
                             ),

@@ -220,6 +220,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
             TextFormField(
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
+                floatingLabelStyle: TextStyle(color: Colors.blueAccent),
                 labelText: '아이디(이메일) 입력',
                 border: OutlineInputBorder(),
                 focusedBorder: const OutlineInputBorder(
@@ -242,6 +243,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
               TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
+                  floatingLabelStyle: TextStyle(color: Colors.blueAccent),
                   labelText: '인증번호 입력',
                   border: OutlineInputBorder(),
                   focusedBorder: const OutlineInputBorder(
