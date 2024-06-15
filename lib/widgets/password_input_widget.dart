@@ -23,6 +23,9 @@ class PasswordInputWidget extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blueAccent),
+        ),
         suffixIcon: PasswordToggle(
           onChanged: (value) {
             suffixClick(value);

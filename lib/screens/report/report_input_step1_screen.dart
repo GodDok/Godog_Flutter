@@ -24,16 +24,28 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
   var cityList = ["경남"];
 
   var provinceList = [
-    "창원시",
     "진주시",
-    "김해시",
-    "양산시",
     "거제시",
-    "통영시",
-    "사천시",
+    "거창군",
+    "고성군",
+    "김해시",
+    "남해군",
     "밀양시",
+    "사천시",
+    "산청군",
+    "양산시",
     "의령군",
-    "함안군"
+    "창원시 마산합포구",
+    "창원시 마산회원구",
+    "창원시 성산구",
+    "창원시 의창구",
+    "창원시 진해구",
+    "통영시",
+    "창녕군",
+    "하동군",
+    "함안군",
+    "함양군",
+    "합천군"
   ];
 
   var neighborhoodList = [];
@@ -104,7 +116,6 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
   @override
   initState() {
     super.initState();
-    getCity();
     getCategory();
   }
 
@@ -213,13 +224,17 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              suffixIcon: Icon(Icons.search),
+                              focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blueAccent), // 포커스됐을 때 테두리 색상
+                              ),
+                              suffixIcon: const Icon(Icons.search),
                             ),
                             onChanged: (value) {
                               bottomState(() {
                                 setState(() {
                                   filteredList = industryList
-                                      .where((item) => item
+                                      .where((item) =>
+                                      item
                                           .toLowerCase()
                                           .contains(value.toLowerCase()))
                                       .toList();
@@ -245,7 +260,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                               },
                               separatorBuilder:
                                   (BuildContext context, int index) =>
-                                      const Divider(),
+                              const Divider(),
                               itemCount: filteredList.length,
                             ),
                           ),
@@ -289,7 +304,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
             ),
           ),
           backgroundColor:
-              industry == name ? Colors.blueAccent : const Color(0xffe5e5e5),
+          industry == name ? Colors.blueAccent : const Color(0xffe5e5e5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -357,7 +372,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                         },
                         itemCount: cityList.length,
                         separatorBuilder: (BuildContext context, int index) =>
-                            const SizedBox(height: 10),
+                        const SizedBox(height: 10),
                       ),
                     ),
                     const Stack(
@@ -392,7 +407,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                         },
                         itemCount: provinceList.length,
                         separatorBuilder: (BuildContext context, int index) =>
-                            const SizedBox(height: 10),
+                        const SizedBox(height: 10),
                       ),
                     ),
                     const Stack(
@@ -409,31 +424,31 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                       child: province == null
                           ? const SizedBox()
                           : ListView.separated(
-                              itemBuilder: (BuildContext context, int index) {
-                                return Center(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      handleNeighborhoodSelection(
-                                          neighborhoodList[index]);
-                                    },
-                                    child: Text(
-                                      neighborhoodList[index],
-                                      style: TextStyle(
-                                        color: neighborhood ==
-                                                neighborhoodList[index]
-                                            ? Colors.blueAccent
-                                            : Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                );
+                        itemBuilder: (BuildContext context, int index) {
+                          return Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                handleNeighborhoodSelection(
+                                    neighborhoodList[index]);
                               },
-                              itemCount: neighborhoodList.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) =>
-                                      const SizedBox(height: 10),
+                              child: Text(
+                                neighborhoodList[index],
+                                style: TextStyle(
+                                  color: neighborhood ==
+                                      neighborhoodList[index]
+                                      ? Colors.blueAccent
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
+                          );
+                        },
+                        itemCount: neighborhoodList.length,
+                        separatorBuilder:
+                            (BuildContext context, int index) =>
+                        const SizedBox(height: 10),
+                      ),
                     ),
                   ],
                 ),
@@ -464,11 +479,12 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ReportInputStep2Screen(
-                        "경남",
-                        this.province!,
-                        this.neighborhood!,
-                        this.detailIndustry!),
+                    builder: (context) =>
+                        ReportInputStep2Screen(
+                            "경남",
+                            this.province!,
+                            this.neighborhood!,
+                            this.detailIndustry!),
                   ),
                 );
               },

@@ -34,6 +34,9 @@ class ReportInputWidget extends StatelessWidget {
               decoration: InputDecoration(
                   labelText: '',
                   border: const OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent),
+                  ),
                   suffixIcon: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

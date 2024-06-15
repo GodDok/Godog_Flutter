@@ -283,6 +283,10 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.blue),
+                        ),
                       ),
                     ),
                   ),

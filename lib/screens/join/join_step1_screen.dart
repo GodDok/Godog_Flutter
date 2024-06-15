@@ -222,6 +222,9 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
               decoration: const InputDecoration(
                 labelText: '아이디(이메일) 입력',
                 border: OutlineInputBorder(),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
               ),
               onChanged: (value) {
                 onPausePressed();
@@ -241,6 +244,9 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
                 decoration: const InputDecoration(
                   labelText: '인증번호 입력',
                   border: OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent),
+                  ),
                 ),
                 onChanged: (value) {
                   setState(() {

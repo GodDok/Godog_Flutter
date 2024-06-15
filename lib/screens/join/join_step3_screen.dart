@@ -193,6 +193,9 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                   decoration: const InputDecoration(
                     labelText: '',
                     border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blueAccent),
+                    ),
                   ),
                 ),
               ),

@@ -203,7 +203,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
               suffixText: '만원',
               text: '목표이익(월)',
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 50),
             Center(
               child: NextButtonWidget(
                 isComplete: isCompletedInput,
