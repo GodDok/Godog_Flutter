@@ -17,7 +17,9 @@ class LoginService extends ILoginService {
   Future<TokenModel> postLogin(String email, String password) async {
     final response = await dio.post("/api/v1/login",
         data: {'email': email, 'password': password},
-        options: Options(contentType: Headers.jsonContentType));
+        options: Options(
+            contentType: Headers.jsonContentType,
+            headers: {'Authorization': null}));
 
     if (response.statusCode == 200) {
       final result = jsonDecode(response.toString());
