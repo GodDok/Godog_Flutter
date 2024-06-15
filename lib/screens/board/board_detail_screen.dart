@@ -133,6 +133,7 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

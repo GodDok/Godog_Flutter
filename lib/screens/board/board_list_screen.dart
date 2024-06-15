@@ -53,8 +53,12 @@ class _BoardListScreenState extends State<BoardListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('창업 커뮤니티', style: TextStyle(fontWeight: FontWeight.bold),),
+        title: const Text(
+          '창업 커뮤니티',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 0.0), // 조정 가능한 값입니다.
@@ -91,9 +95,9 @@ class _BoardListScreenState extends State<BoardListScreen> {
             TextFormField(
               decoration: InputDecoration(
                 hintText: '제목을 입력하세요',
-                hintStyle: TextStyle(color: Colors.grey),
+                hintStyle: const TextStyle(color: Colors.grey),
                 // Hint 색상 설정
-                contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+                contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
                 // 시작 패딩 설정
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),

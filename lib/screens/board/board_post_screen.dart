@@ -58,8 +58,12 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('게시글 작성', style: TextStyle(fontWeight: FontWeight.bold),),
+        title: const Text(
+          '게시글 작성',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
