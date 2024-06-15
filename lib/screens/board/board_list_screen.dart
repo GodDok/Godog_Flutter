@@ -58,6 +58,7 @@ class _BoardListScreenState extends State<BoardListScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
       ),
       floatingActionButton: Padding(
