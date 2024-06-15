@@ -36,18 +36,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
     "함안군"
   ];
 
-  var neighborhoodList = [
-    "성북동",
-    "중앙동",
-    "상봉동",
-    "천전동",
-    "상대동",
-    "하대동",
-    "상평동",
-    "가호동",
-    "신안동",
-    "평거동"
-  ];
+  var neighborhoodList = [];
 
   // 대분류 업종
   var category = [
@@ -207,78 +196,60 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
           showModalBottomSheet(
               backgroundColor: Colors.white,
               context: context,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+              ),
               builder: (BuildContext context) {
                 return StatefulBuilder(
                   builder: (BuildContext context, StateSetter bottomState) {
-                    return SizedBox(
-                      height: 600,
-                      width: double.infinity,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: '상세 업종을 입력하세요',
-                                border: const OutlineInputBorder(),
-                                suffixIcon: GestureDetector(
-                                  child: const Icon(
-                                    Icons.search,
-                                  ),
-                                ),
+                    return Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: '상세 업종을 입력하세요',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                              onChanged: (value) {
-                                bottomState(() {
-                                  setState(() {
-                                    filteredList = industryList
-                                        .where((item) => item
-                                            .toLowerCase()
-                                            .contains(value.toLowerCase()))
-                                        .toList();
-                                  });
+                              suffixIcon: Icon(Icons.search),
+                            ),
+                            onChanged: (value) {
+                              bottomState(() {
+                                setState(() {
+                                  filteredList = industryList
+                                      .where((item) => item
+                                          .toLowerCase()
+                                          .contains(value.toLowerCase()))
+                                      .toList();
                                 });
-                              },
-                            ),
-                            const SizedBox(
-                              height: 50,
-                            ),
-                            Expanded(
-                              child: ListView.separated(
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        selectDetailIndustry(
-                                            filteredList[index]);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(
-                                        filteredList[index],
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: Colors.black),
-                                      ),
-                                    );
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          Expanded(
+                            child: ListView.separated(
+                              itemBuilder: (BuildContext context, int index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    selectDetailIndustry(filteredList[index]);
+                                    Navigator.pop(context);
                                   },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) =>
-                                          const Column(children: [
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Divider(
-                                              height: 1,
-                                              color: Colors.grey,
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            )
-                                          ]),
-                                  itemCount: filteredList.length),
+                                  child: ListTile(
+                                    title: Text(filteredList[index],
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w600)),
+                                  ),
+                                );
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const Divider(),
+                              itemCount: filteredList.length,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     );
                   },
@@ -309,21 +280,20 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
 
           inputCompleteConfirmation();
         },
-        child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: industry == name
-                    ? Colors.blueAccent
-                    : const Color(0xffe5e5e5)),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Text(
-                name,
-                style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    color: industry == name ? Colors.white : Colors.black),
-              ),
-            )),
+        child: Chip(
+          label: Text(
+            name,
+            style: TextStyle(
+              fontWeight: FontWeight.w800,
+              color: industry == name ? Colors.white : Colors.black,
+            ),
+          ),
+          backgroundColor:
+              industry == name ? Colors.blueAccent : const Color(0xffe5e5e5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
       ),
     );
   }
@@ -334,12 +304,17 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xfff5f5f5),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xfff5f5f5),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           "지역 및 업종 선택",
-          style: TextStyle(fontWeight: FontWeight.w800),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+          ),
         ),
       ),
       body: Padding(
@@ -347,121 +322,124 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
         child: Column(
           children: [
             const ProgressWidget(value: 0.5),
-            const SizedBox(
-              height: 30,
-            ),
-            Container(
-              color: Colors.white,
-              height: 200,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: ListView.separated(
-                      itemBuilder: (BuildContext context, int index) {
-                        return Center(
+            const SizedBox(height: 30),
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 5,
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.all(10),
+                height: 200,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: ListView.separated(
+                        itemBuilder: (BuildContext context, int index) {
+                          return Center(
                             child: GestureDetector(
-                                onTap: () {
-                                  handleCitySelection(cityList[index]);
-                                },
-                                child: Text(
-                                  cityList[index],
-                                  style: TextStyle(
-                                      color: city == cityList[index]
-                                          ? Colors.blueAccent
-                                          : Colors.black),
-                                )));
-                      },
-                      itemCount: cityList.length,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const SizedBox(
-                        height: 10,
-                      ),
-                    ),
-                  )),
-                  const Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      VerticalDivider(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      Icon(Icons.play_arrow_sharp, color: Colors.blueAccent),
-                    ],
-                  ),
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: ListView.separated(
-                      itemBuilder: (BuildContext context, int index) {
-                        return Center(
-                            child: GestureDetector(
-                                onTap: () {
-                                  handleProvinceSelection(provinceList[index]);
-                                },
-                                child: Text(
-                                  provinceList[index],
-                                  style: TextStyle(
-                                      color: province == provinceList[index]
-                                          ? Colors.blueAccent
-                                          : Colors.black),
-                                )));
-                      },
-                      itemCount: provinceList.length,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const SizedBox(
-                        height: 10,
-                      ),
-                    ),
-                  )),
-                  const Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      VerticalDivider(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                      Icon(Icons.play_arrow_sharp, color: Colors.blueAccent),
-                    ],
-                  ),
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: province == null
-                        ? const SizedBox()
-                        : ListView.separated(
-                            itemBuilder: (BuildContext context, int index) {
-                              return Center(
-                                  child: GestureDetector(
-                                      onTap: () {
-                                        handleNeighborhoodSelection(
-                                            neighborhoodList[index]);
-                                      },
-                                      child: Text(
-                                        neighborhoodList[index],
-                                        style: TextStyle(
-                                            color: neighborhood ==
-                                                    neighborhoodList[index]
-                                                ? Colors.blueAccent
-                                                : Colors.black),
-                                      )));
-                            },
-                            itemCount: neighborhoodList.length,
-                            separatorBuilder:
-                                (BuildContext context, int index) =>
-                                    const SizedBox(
-                              height: 10,
+                              onTap: () {
+                                handleCitySelection(cityList[index]);
+                              },
+                              child: Text(
+                                cityList[index],
+                                style: TextStyle(
+                                  color: city == cityList[index]
+                                      ? Colors.blueAccent
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
-                          ),
-                  )),
-                ],
+                          );
+                        },
+                        itemCount: cityList.length,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const SizedBox(height: 10),
+                      ),
+                    ),
+                    const Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        VerticalDivider(
+                          color: Colors.grey,
+                          width: 1,
+                        ),
+                        Icon(Icons.play_arrow_sharp, color: Colors.blueAccent),
+                      ],
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                        itemBuilder: (BuildContext context, int index) {
+                          return Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                handleProvinceSelection(provinceList[index]);
+                              },
+                              child: Text(
+                                provinceList[index],
+                                style: TextStyle(
+                                  color: province == provinceList[index]
+                                      ? Colors.blueAccent
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        itemCount: provinceList.length,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const SizedBox(height: 10),
+                      ),
+                    ),
+                    const Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        VerticalDivider(
+                          color: Colors.grey,
+                          width: 1,
+                        ),
+                        Icon(Icons.play_arrow_sharp, color: Colors.blueAccent),
+                      ],
+                    ),
+                    Expanded(
+                      child: province == null
+                          ? const SizedBox()
+                          : ListView.separated(
+                              itemBuilder: (BuildContext context, int index) {
+                                return Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      handleNeighborhoodSelection(
+                                          neighborhoodList[index]);
+                                    },
+                                    child: Text(
+                                      neighborhoodList[index],
+                                      style: TextStyle(
+                                        color: neighborhood ==
+                                                neighborhoodList[index]
+                                            ? Colors.blueAccent
+                                            : Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              itemCount: neighborhoodList.length,
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const SizedBox(height: 10),
+                            ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             const Row(
               children: [
                 Text(
@@ -473,9 +451,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             Wrap(
               spacing: 8.0,
               runSpacing: 4.0,
@@ -483,22 +459,21 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
             ),
             Expanded(child: Container()),
             NextButtonWidget(
-                isComplete: isCompletedInput,
-                onClick: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ReportInputStep2Screen(
-                          "경남",
-                          this.province!,
-                          this.neighborhood!,
-                          this.detailIndustry!),
-                    ),
-                  );
-                }),
-            const SizedBox(
-              height: 50,
-            )
+              isComplete: isCompletedInput,
+              onClick: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ReportInputStep2Screen(
+                        "경남",
+                        this.province!,
+                        this.neighborhood!,
+                        this.detailIndustry!),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 50),
           ],
         ),
       ),
