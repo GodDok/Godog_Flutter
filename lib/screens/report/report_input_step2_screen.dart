@@ -109,6 +109,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
