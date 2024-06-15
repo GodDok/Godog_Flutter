@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:godog/models/strings_model.dart';
+import '../../../core/cache_manager.dart';
 import '../../../models/report_model.dart';
 
 abstract class IReportService {
@@ -48,6 +49,8 @@ class ReportService extends IReportService {
       String city,
       String district,
       String type) async {
+    final accessToken = await CacheManager().getAccessToken();
+
     final response = await dio.post("/api/v1/reports",
         data: {
           'marginRate': marginRate,
@@ -63,7 +66,9 @@ class ReportService extends IReportService {
           'district': district,
           'type': type,
         },
-        options: Options(contentType: Headers.jsonContentType));
+        options: Options(
+            contentType: Headers.jsonContentType,
+            headers: {'Authorization': 'Bearer $accessToken'}));
 
     if (response.statusCode == 200) {
       final result = jsonDecode(response.toString());
