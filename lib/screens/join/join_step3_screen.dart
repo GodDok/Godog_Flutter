@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:godog/screens/join/services/join_service.dart';
+
 import '../../core/cache_manager.dart';
 import '../../core/network_service.dart';
 import '../../widgets/basic_text_button_widget.dart';
@@ -25,24 +26,34 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
 
   Future<void> join(String email, String password, String name, String gender,
       String birthDate) async {
-    final Dio dio = NetworkService.instance.dio;
-    final JoinService joinService = JoinService(dio);
-    final result =
-        await joinService.postSignup(email, password, name, gender, birthDate);
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final JoinService joinService = JoinService(dio);
+      final result = await joinService.postSignup(
+          email, password, name, gender, birthDate);
 
-    final cacheManger = CacheManager();
-    await cacheManger.saveAccessToken(result.result.accessToken);
-    await cacheManger.saveRefreshToken(result.result.refreshToken);
+      if (result.isSuccess) {
+        final cacheManger = CacheManager();
+        await cacheManger.saveAccessToken(result.result.accessToken);
+        await cacheManger.saveRefreshToken(result.result.refreshToken);
 
-    print("회원가입 성공");
+        // 화면 이동
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ReportInputStep1Screen(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
 
-    // 화면 이동
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ReportInputStep1Screen(),
-      ),
-    );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   void _selectGender(String gender) {
@@ -168,23 +179,23 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-                SizedBox(
-                  height: 50,
-                  width: 150,
-                  child: TextFormField(
-                    keyboardType: TextInputType.name,
-                    textInputAction: TextInputAction.next,
-                    onChanged: (value) {
-                      setState(() {
-                        name = value;
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      labelText: '',
-                      border: OutlineInputBorder(),
-                    ),
+              SizedBox(
+                height: 50,
+                width: 150,
+                child: TextFormField(
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  onChanged: (value) {
+                    setState(() {
+                      name = value;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelText: '',
+                    border: OutlineInputBorder(),
                   ),
                 ),
+              ),
             ]),
             const SizedBox(
               height: 40,

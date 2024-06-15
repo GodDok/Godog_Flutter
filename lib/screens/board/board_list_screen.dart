@@ -19,13 +19,26 @@ class _BoardListScreenState extends State<BoardListScreen> {
   List<BoardResult> boardList = [];
 
   getBoardList() async {
-    final BoardService boardService = BoardService(NetworkService.instance.dio);
-    final boardListResult = await boardService.getBoardList();
+    try {
+      final BoardService boardService =
+          BoardService(NetworkService.instance.dio);
+      final boardListResult = await boardService.getBoardList();
 
-    setState(() {
-      boardList = boardListResult.result;
-      filteredList = boardListResult.result;
-    });
+      if (boardListResult.isSuccess) {
+        setState(() {
+          boardList = boardListResult.result;
+          filteredList = boardListResult.result;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(boardListResult.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   @override

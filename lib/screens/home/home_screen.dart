@@ -3,11 +3,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:godog/core/network_service.dart';
 import 'package:godog/models/policy_model.dart';
+import 'package:godog/models/population_model.dart';
 import 'package:godog/screens/home/services/home_service.dart';
 import 'package:godog/screens/map/map_screen.dart';
 import 'package:godog/widgets/home_widget/jindanbutton.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:godog/models/population_model.dart'; // PopulationData 모델 클래스 가져오기
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,83 +38,146 @@ class _MyWidgetState extends State<HomeScreen> {
   double quarterRate = 0.0;
 
   getPolicys(String province) async {
-    final Dio dio = Dio(BaseOptions(baseUrl: 'http://52.78.101.153:8081'));
-    final HomeService homeService = HomeService(dio);
-    final result = await homeService.getPolicys(province);
-    if (result != null) {
-      contents = result.content;
+    try {
+      final Dio dio = Dio(BaseOptions(baseUrl: 'http://52.78.101.153:8081'));
+      final HomeService homeService = HomeService(dio);
+      final result = await homeService.getPolicys(province);
+
+      if (result != null) {
+        contents = result.content;
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
     }
-    setState(() {});
   }
 
   getPopulation() async {
-    final Dio dio = NetworkService.instance.dio;
-    final HomeService homeService = HomeService(dio);
-    final result = await homeService.getPopulation();
-    print(result?.result.first.ageGroup.toString());
-    if (result != null) {
-      populationData = result; // PopulationData 저장
-      updateDataForYear(selectedYear); // 기본 연도로 데이터 업데이트
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final HomeService homeService = HomeService(dio);
+      final result = await homeService.getPopulation();
+
+      if (result != null && result.isSuccess) {
+        populationData = result; // PopulationData 저장
+        updateDataForYear(selectedYear); // 기본 연도로 데이터 업데이트
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
     }
-    setState(() {});
   }
 
   getBreakEven() async {
-    final Dio dio = NetworkService.instance.dio;
-    final HomeService homeService = HomeService(dio);
-    final result = await homeService.getBreakEven();
-    print(result?.result.marginRate.toString());
-    if (result != null) {
-      marginRate = result.result.marginRate.toInt().toString();
-      fixedExpenses = result.result.fixedExpenses.toInt().toString();
-      breakEvenAmount = result.result.breakEvenAmount.toInt().toString();
-      targetRevenue = result.result.targetRevenue.toInt().toString();
-      minimumOperatingAmount =
-          result.result.minimumOperatingAmount.toInt().toString();
-      avgDailySalesForTargetProfit =
-          result.result.avgDailySalesForTargetProfit.toInt().toString();
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final HomeService homeService = HomeService(dio);
+      final result = await homeService.getBreakEven();
+
+      if (result != null && result.isSuccess) {
+        marginRate = result.result.marginRate.toInt().toString();
+        fixedExpenses = result.result.fixedExpenses.toInt().toString();
+        breakEvenAmount = result.result.breakEvenAmount.toInt().toString();
+        targetRevenue = result.result.targetRevenue.toInt().toString();
+        minimumOperatingAmount =
+            result.result.minimumOperatingAmount.toInt().toString();
+        avgDailySalesForTargetProfit =
+            result.result.avgDailySalesForTargetProfit.toInt().toString();
+
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
     }
-    setState(() {});
   }
 
   getCountCity() async {
-    final Dio dio = NetworkService.instance.dio;
-    final HomeService homeService = HomeService(dio);
-    final result = await homeService.getCountCity();
-    print(result?.result);
-    if (result != null) {
-      cityCount = result.result.toInt();
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final HomeService homeService = HomeService(dio);
+      final result = await homeService.getCountCity();
+
+      if (result != null && result.isSuccess) {
+        cityCount = result.result.toInt();
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
     }
-    setState(() {});
   }
 
   getCountAverage() async {
-    final Dio dio = NetworkService.instance.dio;
-    final HomeService homeService = HomeService(dio);
-    final result = await homeService.getCountAverage();
-    print(result?.result);
-    if (result != null) {
-      averageCount = result.result.toInt();
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final HomeService homeService = HomeService(dio);
+      final result = await homeService.getCountAverage();
+
+      if (result != null) {
+        averageCount = result.result.toInt();
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
     }
-    setState(() {});
   }
 
   getCompetitionRates() async {
-    final Dio dio = NetworkService.instance.dio;
-    final HomeService homeService = HomeService(dio);
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final HomeService homeService = HomeService(dio);
 
-    final yearRateResult = await homeService.getCompetitionYearRate();
-    final quarterRateResult = await homeService.getCompetitionQuarterRate();
+      final yearRateResult = await homeService.getCompetitionYearRate();
+      final quarterRateResult = await homeService.getCompetitionQuarterRate();
 
-    if (yearRateResult != null) {
-      yearRate = double.parse(yearRateResult.result);
+      final yearRateResultIsSuccess =
+          yearRateResult != null && yearRateResult.isSuccess;
+      final quarterRateResultIsSuccess =
+          quarterRateResult != null && quarterRateResult.isSuccess;
+
+      if (yearRateResultIsSuccess && quarterRateResultIsSuccess) {
+        yearRate = double.parse(yearRateResult.result);
+        quarterRate = double.parse(quarterRateResult.result);
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
     }
-
-    if (quarterRateResult != null) {
-      quarterRate = double.parse(quarterRateResult.result);
-    }
-
-    setState(() {});
   }
 
   void updateDataForYear(int year) {

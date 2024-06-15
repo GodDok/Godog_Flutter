@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class NextButtonWidget extends StatelessWidget {
   const NextButtonWidget({
     super.key,
-    required this.isComplete, required this.onClick,
+    required this.isComplete,
+    required this.onClick,
   });
 
   final bool isComplete;

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:godog/screens/report/report_input_step2_screen.dart';
 import 'package:godog/screens/report/services/report_service.dart';
+
 import '../../core/network_service.dart';
 import '../../widgets/next_button_widget.dart';
 import '../../widgets/progress_widget.dart';
@@ -70,21 +71,45 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
   final Dio dio = NetworkService.instance.dio;
 
   getCity() async {
-    final ReportService reportService = ReportService(dio);
-    final cityResult = await reportService.getCity();
+    try {
+      final ReportService reportService = ReportService(dio);
+      final cityResult = await reportService.getCity();
 
-    setState(() {
-      provinceList = cityResult.result;
-    });
+      if (cityResult.isSuccess) {
+        setState(() {
+          provinceList = cityResult.result;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(cityResult.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   getCategory() async {
-    final ReportService reportService = ReportService(dio);
-    final categoryResult = await reportService.getCategory();
+    try {
+      final ReportService reportService = ReportService(dio);
+      final categoryResult = await reportService.getCategory();
 
-    setState(() {
-      category = categoryResult.result;
-    });
+      if (categoryResult.isSuccess) {
+        setState(() {
+          category = categoryResult.result;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(categoryResult.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   @override
@@ -118,12 +143,24 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
   }
 
   getDistrict(String province) async {
-    final ReportService reportService = ReportService(dio);
-    final districtResult = await reportService.getDistrict(province);
+    try {
+      final ReportService reportService = ReportService(dio);
+      final districtResult = await reportService.getDistrict(province);
 
-    setState(() {
-      neighborhoodList = districtResult.result;
-    });
+      if (districtResult.isSuccess) {
+        setState(() {
+          neighborhoodList = districtResult.result;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   void handleProvinceSelection(String province) {
@@ -158,92 +195,106 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
   }
 
   getStore(String type) async {
-    final ReportService reportService = ReportService(dio);
-    var result = await reportService.getStore(type);
+    try {
+      final ReportService reportService = ReportService(dio);
+      var result = await reportService.getStore(type);
 
-    setState(() {
-      industryList = result.result;
-      filteredList = industryList;
+      if (result.isSuccess) {
+        setState(() {
+          industryList = result.result;
+          filteredList = industryList;
 
-      showModalBottomSheet(
-          backgroundColor: Colors.white,
-          context: context,
-          builder: (BuildContext context) {
-            return StatefulBuilder(
-              builder: (BuildContext context, StateSetter bottomState) {
-                return SizedBox(
-                  height: 600,
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: '상세 업종을 입력하세요',
-                            border: const OutlineInputBorder(),
-                            suffixIcon: GestureDetector(
-                              child: const Icon(
-                                Icons.search,
-                              ),
-                            ),
-                          ),
-                          onChanged: (value) {
-                            bottomState(() {
-                              setState(() {
-                                filteredList = industryList
-                                    .where((item) => item
-                                        .toLowerCase()
-                                        .contains(value.toLowerCase()))
-                                    .toList();
-                              });
-                            });
-                          },
-                        ),
-                        const SizedBox(
-                          height: 50,
-                        ),
-                        Expanded(
-                          child: ListView.separated(
-                              itemBuilder: (BuildContext context, int index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    selectDetailIndustry(filteredList[index]);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    filteredList[index],
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                        color: Colors.black),
+          showModalBottomSheet(
+              backgroundColor: Colors.white,
+              context: context,
+              builder: (BuildContext context) {
+                return StatefulBuilder(
+                  builder: (BuildContext context, StateSetter bottomState) {
+                    return SizedBox(
+                      height: 600,
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              decoration: InputDecoration(
+                                labelText: '상세 업종을 입력하세요',
+                                border: const OutlineInputBorder(),
+                                suffixIcon: GestureDetector(
+                                  child: const Icon(
+                                    Icons.search,
                                   ),
-                                );
+                                ),
+                              ),
+                              onChanged: (value) {
+                                bottomState(() {
+                                  setState(() {
+                                    filteredList = industryList
+                                        .where((item) => item
+                                            .toLowerCase()
+                                            .contains(value.toLowerCase()))
+                                        .toList();
+                                  });
+                                });
                               },
-                              separatorBuilder:
-                                  (BuildContext context, int index) =>
-                                      const Column(children: [
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Divider(
-                                          height: 1,
-                                          color: Colors.grey,
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        )
-                                      ]),
-                              itemCount: filteredList.length),
+                            ),
+                            const SizedBox(
+                              height: 50,
+                            ),
+                            Expanded(
+                              child: ListView.separated(
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        selectDetailIndustry(
+                                            filteredList[index]);
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        filteredList[index],
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                            color: Colors.black),
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) =>
+                                          const Column(children: [
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Divider(
+                                              height: 1,
+                                              color: Colors.grey,
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            )
+                                          ]),
+                                  itemCount: filteredList.length),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 );
-              },
-            );
-          });
-    });
+              });
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   getChip(name) {

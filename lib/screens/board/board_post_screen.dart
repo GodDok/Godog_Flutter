@@ -16,33 +16,40 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
   final TextEditingController contentController = TextEditingController();
 
   Future<void> submitPost() async {
-    String title = titleController.text;
-    String content = contentController.text;
+    try {
+      String title = titleController.text;
+      String content = contentController.text;
 
-    if (title.isEmpty || content.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('제목과 내용을 모두 입력해주세요.')),
-      );
-      return;
-    } else {
-      final BoardService boardService =
-          BoardService(NetworkService.instance.dio);
-      final result = await boardService.postBoard(title, content);
-
-      if (result.isSuccess) {
+      if (title.isEmpty || content.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('게시글 작성이 완료되었습니다.')),
+          const SnackBar(content: Text('제목과 내용을 모두 입력해주세요.')),
         );
-
-        titleController.clear();
-        contentController.clear();
-
-        Navigator.pop(context);
+        return;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('네트워크 에러가 발생했습니다.')),
-        );
+        final BoardService boardService =
+            BoardService(NetworkService.instance.dio);
+        final result = await boardService.postBoard(title, content);
+
+        if (result.isSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.message)),
+          );
+
+          titleController.clear();
+          contentController.clear();
+
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.message)),
+          );
+        }
       }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
     }
   }
 
@@ -84,12 +91,13 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
             ),
             const SizedBox(height: 16),
             BasicTextButtonWidget(
-              text: '완료',
-              backgroundColor: Colors.blueAccent,
-              textColor: Colors.white,
-              onClick: submitPost
-            ),
-            const SizedBox(height: 20,)
+                text: '완료',
+                backgroundColor: Colors.blueAccent,
+                textColor: Colors.white,
+                onClick: submitPost),
+            const SizedBox(
+              height: 20,
+            )
           ],
         ),
       ),

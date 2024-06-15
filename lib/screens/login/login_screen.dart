@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:godog/screens/login/services/login_service.dart';
 import 'package:godog/widgets/password_input_widget.dart';
+
 import '../../core/cache_manager.dart';
 import '../../core/network_service.dart';
 import '../../main.dart';
@@ -44,16 +45,27 @@ class _LoginScreenState extends State<LoginScreen> {
   bool obscureText = true;
 
   Future<void> login(email, password) async {
-    final Dio dio = NetworkService.instance.dio;
-    final LoginService loginService = LoginService(dio);
-    final result = await loginService.postLogin(email, password);
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final LoginService loginService = LoginService(dio);
+      final result = await loginService.postLogin(email, password);
 
-    final cacheManger = CacheManager();
-    await cacheManger.saveAccessToken(result.result.accessToken);
-    await cacheManger.saveRefreshToken(result.result.refreshToken);
+      if (result.isSuccess) {
+        final cacheManger = CacheManager();
+        await cacheManger.saveAccessToken(result.result.accessToken);
+        await cacheManger.saveRefreshToken(result.result.refreshToken);
 
-    print("로그인 성공");
-    navigate(context);
+        navigate(context);
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   Color getButtonColor() {

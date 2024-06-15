@@ -33,7 +33,6 @@ class CacheManager {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(CacheManagerKey.REPORT.toString());
   }
-
 }
 
 enum CacheManagerKey { ACCESS_TOKEN, REFRESH_TOKEN, REPORT }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../widgets/basic_text_button_widget.dart';
 import '../../widgets/next_button_widget.dart';
 import '../../widgets/password_input_widget.dart';
@@ -188,7 +189,8 @@ class _JoinStep2ScreenState extends State<JoinStep2Screen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => JoinStep3Screen(widget.email, password),
+                      builder: (context) =>
+                          JoinStep3Screen(widget.email, password),
                     ),
                   );
                 }),

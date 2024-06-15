@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:godog/main.dart';
 import 'package:godog/screens/report/services/report_service.dart';
 import 'package:godog/widgets/report_input_widget.dart';
+
 import '../../core/cache_manager.dart';
 import '../../core/network_service.dart';
 import '../../widgets/next_button_widget.dart';
@@ -34,33 +35,43 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
   String? theGoalIs;
 
   createReport() async {
-    final Dio dio = NetworkService.instance.dio;
-    final ReportService reportService = ReportService(dio);
-    final result = await reportService.postReport(
-        marginRate!,
-        totalBudget!,
-        rent!,
-        loan!,
-        otherExpenses!,
-        personnelExpenses!,
-        averageNumberOfWorkingDaysPerMonth!,
-        theGoalIs!,
-        widget.city,
-        widget.province,
-        widget.neighborhood,
-        widget.category);
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final ReportService reportService = ReportService(dio);
+      final result = await reportService.postReport(
+          marginRate!,
+          totalBudget!,
+          rent!,
+          loan!,
+          otherExpenses!,
+          personnelExpenses!,
+          averageNumberOfWorkingDaysPerMonth!,
+          theGoalIs!,
+          widget.city,
+          widget.province,
+          widget.neighborhood,
+          widget.category);
 
-    print("저장 완료");
+      if (result.isSuccess) {
+        final cacheManger = CacheManager();
+        await cacheManger.saveReport(true);
 
-    final cacheManger = CacheManager();
-    await cacheManger.saveReport(true);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MainPage(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const MainPage(),
-      ),
-    );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   inputCompleteConfirmation() {

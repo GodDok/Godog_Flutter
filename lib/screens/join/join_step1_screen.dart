@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:godog/screens/join/services/mail_service.dart';
+
 import '../../core/network_service.dart';
 import '../../widgets/basic_text_button_widget.dart';
 import '../../widgets/next_button_widget.dart';
@@ -32,20 +34,40 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
   }
 
   Future<void> mailSend(email) async {
-    final result = await mailService.postMailSend(email);
+    try {
+      final result = await mailService.postMailSend(email);
 
-    if (result) {
-      // 타이머 시작
-      onStartPressed();
+      if (result) {
+        // 타이머 시작
+        onStartPressed();
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
     }
   }
 
   Future<void> mailCheck(email, authNum) async {
-    final result = await mailService.postMailCheck(email, authNum);
+    try {
+      final result = await mailService.postMailCheck(email, authNum);
 
-    if (result) {
-      // 인증 완료 처리
-      flutterDialog();
+      if (result) {
+        // 인증 완료 처리
+        flutterDialog();
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
     }
   }
 

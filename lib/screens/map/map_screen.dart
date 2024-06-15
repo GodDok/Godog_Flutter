@@ -1,10 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:godog/models/map_model.dart';
 import 'package:godog/screens/map/mapList_screen.dart';
 import 'package:godog/screens/map/services/map_service.dart';
 import 'package:godog/screens/map/storedetail_screen.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:dio/dio.dart';
-import 'package:godog/models/map_model.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});

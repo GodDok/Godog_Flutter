@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:godog/models/board_comment_model.dart';
 import 'package:godog/models/board_list_model.dart';
 import 'package:godog/screens/board/services/board_service.dart';
@@ -24,28 +22,67 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
   List<CommentResult> commentList = [];
 
   Future<void> getComment() async {
-    final BoardService boardService = BoardService(NetworkService.instance.dio);
-    final boardListResult =
-        await boardService.getComment(widget.boardResult.id.toInt());
+    try {
+      final BoardService boardService =
+          BoardService(NetworkService.instance.dio);
+      final boardListResult =
+          await boardService.getComment(widget.boardResult.id.toInt());
 
-    setState(() {
-      commentList = boardListResult.result;
-    });
+      if (boardListResult.isSuccess) {
+        setState(() {
+          commentList = boardListResult.result;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(boardListResult.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   Future<void> postComment(String comment) async {
-    final BoardService boardService = BoardService(NetworkService.instance.dio);
-    final result =
-        await boardService.postComment(widget.boardResult.id.toInt(), comment);
+    try {
+      final BoardService boardService =
+          BoardService(NetworkService.instance.dio);
+      final result = await boardService.postComment(
+          widget.boardResult.id.toInt(), comment);
 
-    getComment();
+      if (result.isSuccess) {
+        getComment();
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   Future<void> postHeart() async {
-    final BoardService boardService = BoardService(NetworkService.instance.dio);
-    final result = await boardService.postHart(widget.boardResult.id.toInt());
+    try {
+      final BoardService boardService =
+          BoardService(NetworkService.instance.dio);
+      final result = await boardService.postHart(widget.boardResult.id.toInt());
 
-    getComment();
+      if (result.isSuccess) {
+        getComment();
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   @override
@@ -55,22 +92,28 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
   }
 
   String getRelativeTime(String dateTimeString) {
-    DateTime dateTime = DateTime.parse(dateTimeString);
-    DateTime utcDateTime = DateTime.parse(dateTimeString);
-    DateTime kstDateTime = utcDateTime.add(const Duration(hours: 9));
-    Duration difference = DateTime.now().difference(kstDateTime);
+    try {
+      DateTime dateTime = DateTime.parse(dateTimeString);
+      DateTime utcDateTime = DateTime.parse(dateTimeString);
+      DateTime kstDateTime = utcDateTime.add(const Duration(hours: 9));
+      Duration difference = DateTime.now().difference(kstDateTime);
 
-    if (difference.inSeconds < 60) {
-      return '${difference.inSeconds}초 전';
-    } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}분 전';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}시간 전';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}일 전';
-    } else {
-      return DateFormat('yyyy-MM-dd').format(dateTime);
+      if (difference.inSeconds < 60) {
+        return '${difference.inSeconds}초 전';
+      } else if (difference.inMinutes < 60) {
+        return '${difference.inMinutes}분 전';
+      } else if (difference.inHours < 24) {
+        return '${difference.inHours}시간 전';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays}일 전';
+      } else {
+        return DateFormat('yyyy-MM-dd').format(dateTime);
+      }
+    } catch (e) {
+      print("Error: $e");
     }
+
+    return "";
   }
 
   @override

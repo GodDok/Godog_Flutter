@@ -33,13 +33,22 @@ class Board extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Expanded(child: Text("${boardResult.name} · ${boardResult.sectors}"),),
+                      Expanded(
+                        child: Text(
+                            "${boardResult.name} · ${boardResult.sectors}"),
+                      ),
                       const Icon(Icons.favorite),
-                      const SizedBox(width: 2,),
+                      const SizedBox(
+                        width: 2,
+                      ),
                       Text(boardResult.heartCount.toString()),
-                      const SizedBox(width: 10,),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       const Icon(Icons.chat_bubble),
-                      const SizedBox(width: 2,),
+                      const SizedBox(
+                        width: 2,
+                      ),
                       Text(boardResult.commentCount.toString()),
                     ],
                   )
