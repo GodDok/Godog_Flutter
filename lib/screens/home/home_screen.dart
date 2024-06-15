@@ -242,6 +242,7 @@ class _MyWidgetState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -283,7 +284,7 @@ class _MyWidgetState extends State<HomeScreen> {
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color.fromRGBO(242, 242, 242, 0.9),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),

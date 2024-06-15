@@ -430,13 +430,14 @@ class _MapListScreenState extends State<MapListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // 뒤로가기 버튼을 없앱니다.
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         title: const Text(
           "상가정보 목록",
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
         ),
-        backgroundColor: Colors.white, // 앱바 배경색을 흰색으로 설정합니다.
-        elevation: 0, // 앱바 그림자를 제거합니다.
+        scrolledUnderElevation: 0,
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.map),

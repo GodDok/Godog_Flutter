@@ -94,6 +94,7 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const Text(
           "주변상가 찾기",
@@ -146,7 +147,7 @@ class _MapScreenState extends State<MapScreen> {
                           height: 4,
                           margin: const EdgeInsets.symmetric(vertical: 8.0),
                           decoration: BoxDecoration(
-                            color: Colors.grey[300],
+                            color: const Color.fromARGB(255, 255, 255, 255),
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
@@ -211,7 +212,7 @@ class _MapScreenState extends State<MapScreen> {
                               : Container(
                                   width: 100,
                                   height: 100,
-                                  color: Colors.grey,
+                                  color: Colors.white,
                                   child: const Icon(Icons.image_not_supported),
                                 ),
                         ],

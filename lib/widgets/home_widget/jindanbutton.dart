@@ -10,7 +10,7 @@ class CustomButtonContainer extends StatelessWidget {
       width: 500,
       height: 100,
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(242, 242, 242, 0.9),
+        color: const Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
@@ -28,7 +28,7 @@ class CustomButtonContainer extends StatelessWidget {
             left: 30,
             child: Text(
               "예비창업자 전제윤님 번창하세요",
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           Positioned(
