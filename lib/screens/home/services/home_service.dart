@@ -6,6 +6,7 @@ import 'package:godog/models/competition_model.dart';
 import 'package:godog/models/count_model.dart';
 import 'package:godog/models/policy_model.dart';
 import 'package:godog/models/population_model.dart';
+import 'package:godog/models/user_model.dart';
 
 import '../../../core/cache_manager.dart';
 
@@ -19,6 +20,7 @@ abstract class IHomeService {
   Future<CompetitionData?> getCountAverage();
   Future<CompetitionRate?> getCompetitionYearRate();
   Future<CompetitionRate?> getCompetitionQuarterRate();
+  Future<UserNameData?> getUserName();
 
   final Dio dio;
 }
@@ -80,6 +82,21 @@ class HomeService extends IHomeService {
     if (response.statusCode == 200) {
       final result = jsonDecode(response.toString());
       return CompetitionData.fromJson(result);
+    }
+
+    throw Error();
+  }
+
+  @override
+  Future<UserNameData?> getUserName() async {
+    final accessToken = await CacheManager().getAccessToken();
+
+    final response = await dio.get("/api/v1/myname",
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.toString());
+      return UserNameData.fromJson(result);
     }
 
     throw Error();

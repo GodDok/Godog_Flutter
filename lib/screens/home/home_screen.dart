@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:godog/core/network_service.dart';
 import 'package:godog/models/policy_model.dart';
 import 'package:godog/models/population_model.dart';
+import 'package:godog/models/user_model.dart';
 import 'package:godog/screens/home/services/home_service.dart';
 import 'package:godog/screens/map/map_screen.dart';
 import 'package:godog/widgets/home_widget/jindanbutton.dart';
@@ -36,6 +37,29 @@ class _MyWidgetState extends State<HomeScreen> {
 
   double yearRate = 0.0;
   double quarterRate = 0.0;
+
+  String? userName;
+
+  getUsername() async {
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final HomeService homeService = HomeService(dio);
+      final result = await homeService.getUserName();
+
+      if (result != null && result.isSuccess) {
+        userName = result.result;
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
+  }
 
   getPolicys(String province) async {
     try {
@@ -225,6 +249,7 @@ class _MyWidgetState extends State<HomeScreen> {
     getCountCity();
     getCountAverage();
     getCompetitionRates();
+    getUsername();
   }
 
   int maxY = 0;
@@ -277,7 +302,7 @@ class _MyWidgetState extends State<HomeScreen> {
               const SizedBox(
                 height: 20,
               ),
-              const CustomButtonContainer(),
+              CustomButtonContainer(userName: userName),
               const SizedBox(
                 height: 30,
               ),
@@ -360,6 +385,8 @@ class _MyWidgetState extends State<HomeScreen> {
                     ),
                     DropdownButton<int>(
                       value: selectedYear,
+                      dropdownColor: Colors.white,
+                      focusColor: Colors.blue,
                       items: availableYears.map((int year) {
                         return DropdownMenuItem<int>(
                           value: year,
@@ -947,6 +974,7 @@ Widget policySection(List<Content>? contents) {
     children: [
       contents != null
           ? ListView.builder(
+              padding: EdgeInsets.zero,
               itemCount: contents.length,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -954,7 +982,8 @@ Widget policySection(List<Content>? contents) {
                 return Column(
                   children: [
                     policyButton(contents[index]),
-                    const SizedBox(height: 10),
+                    if (index != contents.length - 1)
+                      const SizedBox(height: 10), // 공백 줄이기
                   ],
                 );
               },
@@ -969,7 +998,7 @@ Widget policyButton(Content content) {
     onTap: () => _launchUrl(content.url),
     child: Container(
       decoration: BoxDecoration(
-        color: const Color.fromARGB(204, 243, 250, 254),
+        color: const Color.fromARGB(255, 242, 250, 255),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -982,7 +1011,7 @@ Widget policyButton(Content content) {
         border: Border.all(color: Colors.black, width: 1),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(15), // 패딩 줄이기
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -991,13 +1020,13 @@ Widget policyButton(Content content) {
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5), // 공백 줄이기
             Text("지역명: ${content.institutionName}",
                 style: const TextStyle(fontSize: 15, color: Colors.black)),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5), // 공백 줄이기
             Text("접수기간: ${content.deadlineForApplication}",
                 style: const TextStyle(fontSize: 15, color: Colors.black)),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5), // 공백 줄이기
             Text("소관 기관: ${content.supplyLocation}",
                 style: const TextStyle(fontSize: 15, color: Colors.black)),
           ],
