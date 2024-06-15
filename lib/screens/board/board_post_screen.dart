@@ -58,7 +58,7 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('게시글 작성'),
+        title: const Text('게시글 작성', style: TextStyle(fontWeight: FontWeight.bold),),
         backgroundColor: Colors.white,
       ),
       body: Padding(
@@ -69,9 +69,21 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
             TextField(
               controller: titleController,
               decoration: const InputDecoration(
-                labelText: '제목',
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                border: OutlineInputBorder(),
+                hintText: '제목',
+                hintStyle: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue),
+                ),
               ),
               textAlignVertical: TextAlignVertical.top,
             ),
@@ -79,10 +91,16 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
             Expanded(
               child: TextField(
                 controller: contentController,
-                decoration: const InputDecoration(
-                  labelText: '내용',
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  hintText: '내용을 입력하세요.',
+                  hintStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey[700],
+                  ),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                 ),
                 maxLines: null,
                 expands: true,
