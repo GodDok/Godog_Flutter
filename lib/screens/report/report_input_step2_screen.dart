@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:godog/main.dart';
 import 'package:godog/screens/report/services/report_service.dart';
 import 'package:godog/widgets/report_input_widget.dart';
+import '../../core/cache_manager.dart';
 import '../../core/network_service.dart';
 import '../../widgets/next_button_widget.dart';
 import '../../widgets/progress_widget.dart';
@@ -50,6 +51,9 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
         widget.category);
 
     print("저장 완료");
+
+    final cacheManger = CacheManager();
+    cacheManger.saveReport(true);
 
     Navigator.push(
       context,
