@@ -3,7 +3,6 @@ import 'package:godog/screens/board/board_list_screen.dart';
 import 'package:godog/screens/home/home_screen.dart';
 import 'package:godog/screens/map/map_screen.dart';
 import 'package:godog/screens/start/start_screen.dart';
-// import 'package:godog/screens/login/login_screen.dart';
 
 void main() {
   runApp(const App());
@@ -14,7 +13,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: MainPage());
+    return const MaterialApp(home: StartScreen());
   }
 }
 
