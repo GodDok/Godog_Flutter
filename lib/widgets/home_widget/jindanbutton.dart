@@ -35,7 +35,7 @@ class CustomButtonContainer extends StatelessWidget {
             right: 10,
             bottom: 10,
             child: InkWell(
-              // InkWell을 사용하여 버튼 기능 구현
+// InkWell을 사용하여 버튼 기능 구현
               onTap: () {
                 Navigator.push(
                   context,
