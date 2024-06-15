@@ -99,7 +99,7 @@ class _MyWidgetState extends State<HomeScreen> {
         setState(() {});
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('에러가 발생했습니다.')));
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
       }
     } catch (e) {
       print("Error: $e");
@@ -120,7 +120,7 @@ class _MyWidgetState extends State<HomeScreen> {
         setState(() {});
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('에러가 발생했습니다.')));
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
       }
     } catch (e) {
       print("Error: $e");
@@ -165,8 +165,12 @@ class _MyWidgetState extends State<HomeScreen> {
           quarterRateResult != null && quarterRateResult.isSuccess;
 
       if (yearRateResultIsSuccess && quarterRateResultIsSuccess) {
-        yearRate = double.parse(yearRateResult.result);
-        quarterRate = double.parse(quarterRateResult.result);
+        yearRate = yearRateResult.result == "NaN"
+            ? 0.0
+            : double.parse(yearRateResult.result);
+        quarterRate = quarterRateResult.result == "NaN"
+            ? 0.0
+            : double.parse(quarterRateResult.result);
         setState(() {});
       } else {
         ScaffoldMessenger.of(context)

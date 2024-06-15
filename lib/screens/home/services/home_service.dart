@@ -13,17 +13,11 @@ abstract class IHomeService {
   IHomeService(this.dio);
 
   Future<PopulationData?> getPopulation();
-
-  // Future<PolicyModel?> getPolicys();
   Future<PolicyModel?> getPolicys(String province); // 매개변수 추가
   Future<BreakEvenData?> getBreakEven();
-
   Future<CompetitionData?> getCountCity();
-
   Future<CompetitionData?> getCountAverage();
-
   Future<CompetitionRate?> getCompetitionYearRate();
-
   Future<CompetitionRate?> getCompetitionQuarterRate();
 
   final Dio dio;
