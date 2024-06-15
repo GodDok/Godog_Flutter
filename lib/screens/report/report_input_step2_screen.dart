@@ -61,7 +61,7 @@ class _ReportInputStep2ScreenState extends State<ReportInputStep2Screen> {
         final cacheManger = CacheManager();
         await cacheManger.saveReport(true);
 
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const MainPage(),

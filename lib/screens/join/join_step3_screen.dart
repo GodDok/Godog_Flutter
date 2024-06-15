@@ -38,7 +38,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
         await cacheManger.saveRefreshToken(result.result.refreshToken);
 
         // 화면 이동
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const ReportInputStep1Screen(),
