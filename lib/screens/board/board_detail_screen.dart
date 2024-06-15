@@ -128,7 +128,10 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('게시글 상세', style: TextStyle(fontWeight: FontWeight.bold),),
+        title: const Text(
+          '게시글 상세',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.white,
       ),
       body: Padding(
@@ -284,7 +287,11 @@ class _BoardDetailScreenState extends State<BoardDetailScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.send),
+                    icon: SvgPicture.asset(
+                      'assets/icons/location.svg',
+                      width: 25,
+                      height: 25,
+                    ),
                     onPressed: () {
                       postComment(commentController.text);
                       commentController.clear();
