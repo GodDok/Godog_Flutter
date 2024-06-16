@@ -221,12 +221,14 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: '상세 업종을 입력하세요',
-                              floatingLabelStyle: const TextStyle(color: Colors.blueAccent),
+                              floatingLabelStyle:
+                                  const TextStyle(color: Colors.blueAccent),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blueAccent),
+                                borderSide:
+                                    BorderSide(color: Colors.blueAccent),
                               ),
                               suffixIcon: const Icon(Icons.search),
                             ),
@@ -234,8 +236,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                               bottomState(() {
                                 setState(() {
                                   filteredList = industryList
-                                      .where((item) =>
-                                      item
+                                      .where((item) => item
                                           .toLowerCase()
                                           .contains(value.toLowerCase()))
                                       .toList();
@@ -261,7 +262,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                               },
                               separatorBuilder:
                                   (BuildContext context, int index) =>
-                              const Divider(),
+                                      const Divider(),
                               itemCount: filteredList.length,
                             ),
                           ),
@@ -290,6 +291,8 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
       child: GestureDetector(
         onTap: () {
           setState(() {
+            detailIndustry = null;
+
             getStore(name);
             industry = name;
           });
@@ -305,7 +308,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
             ),
           ),
           backgroundColor:
-          industry == name ? Colors.blueAccent : const Color(0xffe5e5e5),
+              industry == name ? Colors.blueAccent : const Color(0xffe5e5e5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -373,7 +376,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                         },
                         itemCount: cityList.length,
                         separatorBuilder: (BuildContext context, int index) =>
-                        const SizedBox(height: 10),
+                            const SizedBox(height: 10),
                       ),
                     ),
                     const Stack(
@@ -408,7 +411,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                         },
                         itemCount: provinceList.length,
                         separatorBuilder: (BuildContext context, int index) =>
-                        const SizedBox(height: 10),
+                            const SizedBox(height: 10),
                       ),
                     ),
                     const Stack(
@@ -425,31 +428,31 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                       child: province == null
                           ? const SizedBox()
                           : ListView.separated(
-                        itemBuilder: (BuildContext context, int index) {
-                          return Center(
-                            child: GestureDetector(
-                              onTap: () {
-                                handleNeighborhoodSelection(
-                                    neighborhoodList[index]);
+                              itemBuilder: (BuildContext context, int index) {
+                                return Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      handleNeighborhoodSelection(
+                                          neighborhoodList[index]);
+                                    },
+                                    child: Text(
+                                      neighborhoodList[index],
+                                      style: TextStyle(
+                                        color: neighborhood ==
+                                                neighborhoodList[index]
+                                            ? Colors.blueAccent
+                                            : Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                );
                               },
-                              child: Text(
-                                neighborhoodList[index],
-                                style: TextStyle(
-                                  color: neighborhood ==
-                                      neighborhoodList[index]
-                                      ? Colors.blueAccent
-                                      : Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                              itemCount: neighborhoodList.length,
+                              separatorBuilder:
+                                  (BuildContext context, int index) =>
+                                      const SizedBox(height: 10),
                             ),
-                          );
-                        },
-                        itemCount: neighborhoodList.length,
-                        separatorBuilder:
-                            (BuildContext context, int index) =>
-                        const SizedBox(height: 10),
-                      ),
                     ),
                   ],
                 ),
@@ -473,6 +476,8 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
               runSpacing: 4.0,
               children: [...generateIndustry()],
             ),
+            const SizedBox(height: 20),
+            buildSelectedIndustryWidget(), // 추가된 부분
             Expanded(child: Container()),
             NextButtonWidget(
               isComplete: isCompletedInput,
@@ -480,12 +485,12 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        ReportInputStep2Screen(
-                            "경남",
-                            this.province!,
-                            this.neighborhood!,
-                            this.detailIndustry!),
+                    builder: (context) => ReportInputStep2Screen(
+                      "경남",
+                      this.province!,
+                      this.neighborhood!,
+                      this.detailIndustry!,
+                    ),
                   ),
                 );
               },
@@ -495,5 +500,38 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
         ),
       ),
     );
+  }
+
+  Widget buildSelectedIndustryWidget() {
+    if (industry != null && detailIndustry != null) {
+      return Container(
+        padding: EdgeInsets.all(12),
+        color: Colors.blueGrey[50],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '선택한 업종: ',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                '$industry - $detailIndustry',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return SizedBox.shrink();
+    }
   }
 }
