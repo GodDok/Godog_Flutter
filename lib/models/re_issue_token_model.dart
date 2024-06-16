@@ -8,12 +8,19 @@ class ReIssueAccessTokenModel {
       : isSuccess = json['isSuccess'],
         code = json['code'],
         message = json['message'],
-        result = Result.fromJson(json['result']);
+        result = json['result'] != null
+            ? Result.fromJson(json['result'])
+            : Result.empty();
 }
 
 class Result {
   final String accessToken;
 
+  Result({required this.accessToken});
+
   Result.fromJson(Map<String, dynamic> json)
-      : accessToken = json['accessToken'];
+      : accessToken = json['accessToken'] ?? '';
+
+  Result.empty()
+      : accessToken = '';
 }

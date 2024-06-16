@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final LoginService loginService = LoginService(dio);
       final result = await loginService.postLogin(email, password);
 
-      if (result.isSuccess) {
+      if (result != null && result.isSuccess) {
         final cacheManger = CacheManager();
         await cacheManger.saveAccessToken(result.result.accessToken);
         await cacheManger.saveRefreshToken(result.result.refreshToken);
@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
         navigate(context);
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(result.message)));
+            .showSnackBar(SnackBar(content: Text(result?.message ?? "에러가 발생했습니다.")));
       }
     } catch (e) {
       print("Error: $e");
