@@ -33,6 +33,11 @@ class CacheManager {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(CacheManagerKey.REPORT.toString());
   }
+
+  Future<bool> clear() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.clear();
+  }
 }
 
 enum CacheManagerKey { ACCESS_TOKEN, REFRESH_TOKEN, REPORT }

@@ -44,6 +44,10 @@ class StartScreen extends StatelessWidget {
     }
   }
 
+  void clearSharedPreferences(BuildContext context) async {
+    await CacheManager().clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,18 +56,24 @@ class StartScreen extends StatelessWidget {
         padding: const EdgeInsets.all(25),
         child: Column(
           children: [
-            const SizedBox(
-              height: 50,
-            ),
-            Row(
-              children: [
-                Image.asset('assets/images/main_logo.png'),
-                const Text('창신',
+            const SizedBox(height: 50),
+            GestureDetector(
+              onTap: () {
+                // 앱 로고 클릭 시 SharedPreferences 비우기
+                clearSharedPreferences(context);
+              },
+              child: Row(
+                children: [
+                  Image.asset('assets/images/main_logo.png'),
+                  const Text(
+                    '창신',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                    )),
-              ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             const Expanded(
               child: Row(
@@ -85,9 +95,7 @@ class StartScreen extends StatelessWidget {
               textColor: Colors.white,
               onClick: () => navigate(context),
             ),
-            const SizedBox(
-              height: 50,
-            ),
+            const SizedBox(height: 50),
           ],
         ),
       ),
