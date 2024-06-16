@@ -207,7 +207,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
           showModalBottomSheet(
               backgroundColor: Colors.white,
               context: context,
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
               ),
               builder: (BuildContext context) {
@@ -326,6 +326,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
@@ -487,9 +488,9 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                   MaterialPageRoute(
                     builder: (context) => ReportInputStep2Screen(
                       "경남",
-                      this.province!,
-                      this.neighborhood!,
-                      this.detailIndustry!,
+                      province!,
+                      neighborhood!,
+                      detailIndustry!,
                     ),
                   ),
                 );
@@ -505,12 +506,12 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
   Widget buildSelectedIndustryWidget() {
     if (industry != null && detailIndustry != null) {
       return Container(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         color: Colors.blueGrey[50],
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               '선택한 업종: ',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -522,7 +523,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
                 '$industry - $detailIndustry',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                 ),
               ),
@@ -531,7 +532,7 @@ class _ReportInputStep1ScreenState extends State<ReportInputStep1Screen> {
         ),
       );
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 }

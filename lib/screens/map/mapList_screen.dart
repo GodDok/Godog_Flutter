@@ -225,17 +225,18 @@ class _MapListScreenState extends State<MapListScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      store.storeName,
-                                      style: const TextStyle(
-                                        fontSize: 19,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
+                                    // Text(
+                                    //   store.storeName,
+                                    //   style: const TextStyle(
+                                    //     fontSize: 19,
+                                    //     fontWeight: FontWeight.bold,
+                                    //   ),
+                                    // ),
+                                    // const SizedBox(height: 5),
                                     Text(
                                       store.contents,
                                       style: const TextStyle(
+                                          fontSize: 18,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(height: 8),

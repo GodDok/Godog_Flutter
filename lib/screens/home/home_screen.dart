@@ -39,6 +39,8 @@ class _MyWidgetState extends State<HomeScreen> {
   double quarterRate = 0.0;
 
   String? userName;
+  String? cityName;
+  String? cityNamedetail;
 
   getUsername() async {
     try {
@@ -48,6 +50,28 @@ class _MyWidgetState extends State<HomeScreen> {
 
       if (result != null && result.isSuccess) {
         userName = result.result;
+        setState(() {});
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
+  }
+
+  getCityName() async {
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final HomeService homeService = HomeService(dio);
+      final result = await homeService.getCityName();
+
+      if (result != null && result.isSuccess) {
+        cityName = result.result.city;
+        cityNamedetail = result.result.district;
         setState(() {});
       } else {
         ScaffoldMessenger.of(context)
@@ -250,6 +274,7 @@ class _MyWidgetState extends State<HomeScreen> {
     getCountAverage();
     getCompetitionRates();
     getUsername();
+    getCityName();
   }
 
   int maxY = 0;
@@ -340,21 +365,14 @@ class _MyWidgetState extends State<HomeScreen> {
                             children: [
                               const Icon(Icons.place_outlined),
                               GestureDetector(
-                                child: const Text(
-                                  '진주시 가좌동',
-                                  style: TextStyle(
+                                child: Text(
+                                  '$cityName $cityNamedetail',
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.black,
                                   ),
                                 ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const MapScreen(),
-                                      ));
-                                },
                               )
                             ],
                           ),
@@ -410,6 +428,7 @@ class _MyWidgetState extends State<HomeScreen> {
                         BarChartData(
                           alignment: BarChartAlignment.spaceAround,
                           maxY: maxY.toDouble(),
+                          minY: 0,
                           barTouchData: BarTouchData(
                             enabled: true, // Enable touch
                             touchTooltipData: BarTouchTooltipData(
@@ -517,6 +536,11 @@ class _MyWidgetState extends State<HomeScreen> {
                                   toY: maleData[index].toDouble(),
                                   color: Colors.blue,
                                   width: 10,
+                                  backDrawRodData: BackgroundBarChartRodData(
+                                    show: true,
+                                    toY: 0, // 막대가 하단에서 시작되도록 설정
+                                    color: Colors.transparent,
+                                  ),
                                 ),
                                 BarChartRodData(
                                   toY: femaleData[index].toDouble(),
@@ -529,6 +553,7 @@ class _MyWidgetState extends State<HomeScreen> {
                             ),
                           ),
                         ),
+                        swapAnimationDuration: Duration.zero,
                       ),
                     ),
                     const SizedBox(height: 20),
