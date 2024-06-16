@@ -16,33 +16,40 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
   final TextEditingController contentController = TextEditingController();
 
   Future<void> submitPost() async {
-    String title = titleController.text;
-    String content = contentController.text;
+    try {
+      String title = titleController.text;
+      String content = contentController.text;
 
-    if (title.isEmpty || content.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('제목과 내용을 모두 입력해주세요.')),
-      );
-      return;
-    } else {
-      final BoardService boardService =
-          BoardService(NetworkService.instance.dio);
-      final result = await boardService.postBoard(title, content);
-
-      if (result.isSuccess) {
+      if (title.isEmpty || content.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('게시글 작성이 완료되었습니다.')),
+          const SnackBar(content: Text('제목과 내용을 모두 입력해주세요.')),
         );
-
-        titleController.clear();
-        contentController.clear();
-
-        Navigator.pop(context);
+        return;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('네트워크 에러가 발생했습니다.')),
-        );
+        final BoardService boardService =
+            BoardService(NetworkService.instance.dio);
+        final result = await boardService.postBoard(title, content);
+
+        if (result.isSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.message)),
+          );
+
+          titleController.clear();
+          contentController.clear();
+
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.message)),
+          );
+        }
       }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
     }
   }
 
@@ -51,8 +58,12 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('게시글 작성'),
+        title: const Text(
+          '게시글 작성',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -62,9 +73,21 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
             TextField(
               controller: titleController,
               decoration: const InputDecoration(
-                labelText: '제목',
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                border: OutlineInputBorder(),
+                hintText: '제목',
+                hintStyle: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue),
+                ),
               ),
               textAlignVertical: TextAlignVertical.top,
             ),
@@ -72,10 +95,16 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
             Expanded(
               child: TextField(
                 controller: contentController,
-                decoration: const InputDecoration(
-                  labelText: '내용',
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  hintText: '내용을 입력하세요.',
+                  hintStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey[700],
+                  ),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                 ),
                 maxLines: null,
                 expands: true,
@@ -84,12 +113,13 @@ class _BoardPostScreenState extends State<BoardPostScreen> {
             ),
             const SizedBox(height: 16),
             BasicTextButtonWidget(
-              text: '완료',
-              backgroundColor: Colors.blueAccent,
-              textColor: Colors.white,
-              onClick: submitPost
-            ),
-            const SizedBox(height: 20,)
+                text: '완료',
+                backgroundColor: Colors.blueAccent,
+                textColor: Colors.white,
+                onClick: submitPost),
+            const SizedBox(
+              height: 20,
+            )
           ],
         ),
       ),

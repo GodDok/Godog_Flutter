@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class PolicyModel {
   final List<Content> content;
   final Pageable pageable;

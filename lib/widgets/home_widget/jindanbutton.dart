@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:godog/screens/report/report_input_step1_screen.dart';
 
 class CustomButtonContainer extends StatelessWidget {
-  const CustomButtonContainer({super.key});
+  final String? userName;
+
+  const CustomButtonContainer({super.key, this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +12,7 @@ class CustomButtonContainer extends StatelessWidget {
       width: 500,
       height: 100,
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(242, 242, 242, 0.9),
+        color: const Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
@@ -23,19 +25,18 @@ class CustomButtonContainer extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          const Positioned(
+          Positioned(
             top: 15,
             left: 30,
             child: Text(
-              "예비창업자 전제윤님 번창하세요",
-              style: TextStyle(fontSize: 20),
+              "예비창업자 ${userName ?? '사용자'}님 번창하세요",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           Positioned(
             right: 10,
             bottom: 10,
             child: InkWell(
-              // InkWell을 사용하여 버튼 기능 구현
               onTap: () {
                 Navigator.push(
                   context,
@@ -49,13 +50,13 @@ class CustomButtonContainer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
                 child: const Text(
-                  '시작',
+                  '진단하기',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
@@ -65,14 +66,4 @@ class CustomButtonContainer extends StatelessWidget {
       ),
     );
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home: Scaffold(
-      body: Center(
-        child: CustomButtonContainer(),
-      ),
-    ),
-  ));
 }

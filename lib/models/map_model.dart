@@ -1,14 +1,20 @@
-class MapData {
-  final double longitude;
-  final double latitude;
-  final int deposit;
-  final int monthly;
-  final int premium;
-  final int area;
+class StoreModel {
+  final int? id;
+  final String longitude;
+  final String latitude;
+  final String deposit;
+  final String monthly;
+  final String premium;
+  final String area;
   final String contents;
-  final String locationUrl;
+  final String storeName;
+  final String maintenanceCost;
+  final String floor;
+  final String joinDate;
+  final String pictureUrl;
 
-  MapData({
+  StoreModel({
+    required this.id,
     required this.longitude,
     required this.latitude,
     required this.deposit,
@@ -16,32 +22,48 @@ class MapData {
     required this.premium,
     required this.area,
     required this.contents,
-    required this.locationUrl,
+    required this.storeName,
+    required this.maintenanceCost,
+    required this.floor,
+    required this.joinDate,
+    required this.pictureUrl,
   });
 
-  factory MapData.fromJson(Map<String, dynamic> json) {
-    return MapData(
-      longitude: double.parse(json['longitude']),
-      latitude: double.parse(json['latitude']),
-      deposit: int.parse(json['deposit']),
-      monthly: int.parse(json['monthly']),
-      premium: int.parse(json['premium']),
-      area: int.parse(json['area']),
+  // JSON 데이터를 Store 객체로 변환하는 factory constructor
+  factory StoreModel.fromJson(Map<String, dynamic> json) {
+    return StoreModel(
+      id: json['id'],
+      longitude: json['longitude'],
+      latitude: json['latitude'],
+      deposit: json['deposit'],
+      monthly: json['monthly'],
+      premium: json['premium'],
+      area: json['area'],
       contents: json['contents'],
-      locationUrl: json['locationurl'],
+      storeName: json['storeName'],
+      maintenanceCost: json['maintenanceCost'],
+      floor: json['floor'],
+      joinDate: json['joinDate'],
+      pictureUrl: json['pictureUrl'],
     );
   }
 
+  // Store 객체를 JSON으로 변환하는 메서드
   Map<String, dynamic> toJson() {
     return {
-      'longitude': longitude.toString(),
-      'latitude': latitude.toString(),
-      'deposit': deposit.toString(),
-      'monthly': monthly.toString(),
-      'premium': premium.toString(),
-      'area': area.toString(),
+      'id': id,
+      'longitude': longitude,
+      'latitude': latitude,
+      'deposit': deposit,
+      'monthly': monthly,
+      'premium': premium,
+      'area': area,
       'contents': contents,
-      'locationurl': locationUrl,
+      'storeName': storeName,
+      'maintenanceCost': maintenanceCost,
+      'floor': floor,
+      'joinDate': joinDate,
+      'pictureUrl': pictureUrl,
     };
   }
 }

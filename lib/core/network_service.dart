@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:godog/core/cache_manager.dart';
@@ -22,13 +23,6 @@ class NetworkService {
     dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
     dio.interceptors.add(
       QueuedInterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final accessToken = await CacheManager().getAccessToken();
-          if (accessToken != null) {
-            options.headers['Authorization'] = 'Bearer $accessToken';
-          }
-          return handler.next(options);
-        },
         onError: (DioException e, handler) async {
           if (e.response?.statusCode == 401 || e.response?.statusCode == 302) {
             try {

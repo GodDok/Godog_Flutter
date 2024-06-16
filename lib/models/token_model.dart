@@ -8,13 +8,22 @@ class TokenModel {
       : isSuccess = json['isSuccess'],
         code = json['code'],
         message = json['message'],
-        result = Result.fromJson(json['result']);
+        result = json['result'] != null
+            ? Result.fromJson(json['result'])
+            : Result.empty();
 }
 
 class Result {
-  final String accessToken, refreshToken;
+  final String accessToken;
+  final String refreshToken;
+
+  Result({required this.accessToken, required this.refreshToken});
 
   Result.fromJson(Map<String, dynamic> json)
-      : accessToken = json['accessToken'],
-        refreshToken = json['refreshToken'];
+      : accessToken = json['accessToken'] ?? '',
+        refreshToken = json['refreshToken'] ?? '';
+
+  Result.empty()
+      : accessToken = '',
+        refreshToken = '';
 }

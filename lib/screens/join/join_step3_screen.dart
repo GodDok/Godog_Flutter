@@ -1,17 +1,18 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
-import 'package:godog/screens/join/services/join_service.dart';
+import 'package:dio/dio.dart';
+
 import '../../core/cache_manager.dart';
 import '../../core/network_service.dart';
 import '../../widgets/basic_text_button_widget.dart';
 import '../../widgets/progress_widget.dart';
 import '../report/report_input_step1_screen.dart';
+import 'services/join_service.dart';
 
 class JoinStep3Screen extends StatefulWidget {
   final String email, password;
 
-  const JoinStep3Screen(this.email, this.password, {super.key});
+  const JoinStep3Screen(this.email, this.password, {Key? key}) : super(key: key);
 
   @override
   State<JoinStep3Screen> createState() => _JoinStep3ScreenState();
@@ -19,122 +20,115 @@ class JoinStep3Screen extends StatefulWidget {
 
 class _JoinStep3ScreenState extends State<JoinStep3Screen> {
   String selectedGender = "";
-  String birthday = "";
+  String birthday = "날짜를 선택해주세요"; // 초기 문구 설정
   String birthDate = "";
   String name = "";
+  DateTime? selectedDate; // 선택된 날짜를 저장할 변수
 
   Future<void> join(String email, String password, String name, String gender,
       String birthDate) async {
-    final Dio dio = NetworkService.instance.dio;
-    final JoinService joinService = JoinService(dio);
-    final result =
-        await joinService.postSignup(email, password, name, gender, birthDate);
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final JoinService joinService = JoinService(dio);
+      final result = await joinService.postSignup(
+          email, password, name, gender, birthDate);
 
-    final cacheManger = CacheManager();
-    cacheManger.saveAccessToken(result.result.accessToken);
-    cacheManger.saveRefreshToken(result.result.refreshToken);
+      if (result.isSuccess) {
+        final cacheManger = CacheManager();
+        await cacheManger.saveAccessToken(result.result.accessToken);
+        await cacheManger.saveRefreshToken(result.result.refreshToken);
 
-    print("회원가입 성공");
+        // 화면 이동
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ReportInputStep1Screen(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
 
-    // 화면 이동
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ReportInputStep1Screen(),
-      ),
-    );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   void _selectGender(String gender) {
     setState(() {
-      if (gender == '남자') {
-        selectedGender = "MALE";
-      } else {
-        selectedGender = "FEMALE";
-      }
+      selectedGender = gender == '남자' ? "MALE" : "FEMALE";
     });
   }
 
   Color getButtonColor() {
-    if (birthday.isNotEmpty && selectedGender.isNotEmpty) {
-      return Colors.blue;
-    } else {
-      return Colors.grey;
-    }
+    return (selectedDate != null && selectedGender.isNotEmpty)
+        ? Colors.blue
+        : Colors.grey;
   }
 
   void flutterDialog() {
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                DatePickerWidget(
-                  looping: false,
-                  firstDate: DateTime(1900, 1, 1),
-                  lastDate: DateTime(2030, 1, 1),
-                  initialDate: DateTime.now(),
-                  dateFormat: "dd-MMM-yyyy",
-                  locale: DatePicker.localeFromString('en'),
-                  onChange: (DateTime newDate, _) {
-                    setState(() {
-                      var month = newDate.month.toString();
-                      var day = newDate.day.toString();
-
-                      if (newDate.month.toString().length == 1) {
-                        month = "0${newDate.month}";
-                      }
-
-                      if (newDate.day.toString().length == 1) {
-                        day = "0${newDate.day}";
-                      }
-
-                      birthday = "${newDate.year}년 $month월 $day일";
-                      birthDate = "${newDate.year}-$month-$day";
-                    });
-                  },
-                  pickerTheme: const DateTimePickerTheme(
-                    backgroundColor: Colors.white,
-                    itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
-                    dividerColor: Colors.blue,
-                  ),
-                )
-              ],
-            ),
-            actions: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.yellow,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: TextButton(
-                      child: const Text(
-                        "확인",
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.w600),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              DatePickerWidget(
+                looping: false,
+                firstDate: DateTime(1900, 1, 1),
+                lastDate: DateTime(2030, 1, 1),
+                initialDate: selectedDate ?? DateTime.now(), // 초기 선택된 날짜 설정
+                dateFormat: "dd-MMM-yyyy",
+                locale: DatePicker.localeFromString('ko'), // 한글로 설정
+                onChange: (DateTime newDate, _) {
+                  setState(() {
+                    selectedDate = newDate; // 선택된 날짜 업데이트
+                  });
+                },
+                pickerTheme: const DateTimePickerTheme(
+                  backgroundColor: Colors.white,
+                  itemTextStyle: TextStyle(color: Colors.black, fontSize: 19),
+                  dividerColor: Colors.blue,
+                ),
+              )
             ],
-          );
-        });
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  final newDate = selectedDate ?? DateTime.now();
+
+                  var month = newDate.month.toString().padLeft(2, '0');
+                  var day = newDate.day.toString().padLeft(2, '0');
+
+                  birthday = "${newDate.year}년 $month월 $day일";
+                  birthDate = "${newDate.year}-$month-$day";
+                });
+              },
+              child: const Text(
+                "확인",
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -147,32 +141,27 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
         child: Column(
           children: [
             const ProgressWidget(value: 1.0),
-            const SizedBox(
-              height: 30,
+            const SizedBox(height: 30),
+            const Text(
+              '다양한 정보 제공을 위해\n추가 정보를 선택해주세요.',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '다양한 정보 제공을 위해\n추가 정보를 선택해주세요.',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                const Text(
+                  '이름',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              const Text(
-                '이름',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
                 SizedBox(
                   height: 50,
                   width: 150,
                   child: TextFormField(
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
                     onChanged: (value) {
                       setState(() {
@@ -182,13 +171,15 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                     decoration: const InputDecoration(
                       labelText: '',
                       border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                      ),
                     ),
                   ),
                 ),
-            ]),
-            const SizedBox(
-              height: 40,
+              ],
             ),
+            const SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -214,7 +205,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                                 : Colors.grey,
                             size: 14,
                           ),
-                          const SizedBox(width: 5.0),
+                          const SizedBox(width: 5),
                           Text(
                             '남자',
                             style: TextStyle(
@@ -227,33 +218,29 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 20.0),
+                    const SizedBox(width: 20),
                     GestureDetector(
                       onTap: () {
                         _selectGender('여자');
                       },
                       child: Row(
                         children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.check,
-                                color: selectedGender == "FEMALE"
-                                    ? Colors.blue
-                                    : Colors.grey,
-                                size: 14,
-                              ),
-                              const SizedBox(width: 5.0),
-                              Text(
-                                '여자',
-                                style: TextStyle(
-                                  color: selectedGender == "FEMALE"
-                                      ? Colors.blue
-                                      : Colors.grey,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                          Icon(
+                            Icons.check,
+                            color: selectedGender == "FEMALE"
+                                ? Colors.blue
+                                : Colors.grey,
+                            size: 14,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            '여자',
+                            style: TextStyle(
+                              color: selectedGender == "FEMALE"
+                                  ? Colors.blue
+                                  : Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
                       ),
@@ -262,9 +249,7 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 40,
-            ),
+            const SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -287,8 +272,10 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
                     child: Center(
                       child: Text(
                         birthday,
-                        style: const TextStyle(
-                          color: Colors.blueAccent,
+                        style: TextStyle(
+                          color: selectedDate != null
+                              ? Colors.blueAccent
+                              : Colors.black54,
                         ),
                       ),
                     ),
@@ -302,13 +289,20 @@ class _JoinStep3ScreenState extends State<JoinStep3Screen> {
               backgroundColor: getButtonColor(),
               textColor: Colors.white,
               onClick: () {
-                join(widget.email, widget.password, name, selectedGender,
-                    birthDate);
+                if (selectedDate != null && selectedGender.isNotEmpty) {
+                  join(widget.email, widget.password, name, selectedGender,
+                      birthDate);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('정보를 모두 입력해주세요.'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
               },
             ),
-            const SizedBox(
-              height: 50,
-            ),
+            const SizedBox(height: 50),
           ],
         ),
       ),

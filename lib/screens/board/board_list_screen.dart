@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:godog/core/network_service.dart';
 import 'package:godog/models/board_list_model.dart';
 import 'package:godog/screens/board/board_detail_screen.dart';
@@ -19,13 +20,26 @@ class _BoardListScreenState extends State<BoardListScreen> {
   List<BoardResult> boardList = [];
 
   getBoardList() async {
-    final BoardService boardService = BoardService(NetworkService.instance.dio);
-    final boardListResult = await boardService.getBoardList();
+    try {
+      final BoardService boardService =
+          BoardService(NetworkService.instance.dio);
+      final boardListResult = await boardService.getBoardList();
 
-    setState(() {
-      boardList = boardListResult.result;
-      filteredList = boardListResult.result;
-    });
+      if (boardListResult.isSuccess) {
+        setState(() {
+          boardList = boardListResult.result;
+          filteredList = boardListResult.result;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(boardListResult.message)));
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   @override
@@ -39,25 +53,39 @@ class _BoardListScreenState extends State<BoardListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('창업 커뮤니티'),
+        title: const Text(
+          '창업 커뮤니티',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        scrolledUnderElevation: 0,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const BoardPostScreen(),
-            ),
-          ).then((value) => {getBoardList()});
-        },
-        backgroundColor: Colors.blue,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 0.0), // 조정 가능한 값입니다.
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BoardPostScreen(),
+              ),
+            ).then((value) => {getBoardList()});
+          },
+          backgroundColor: const Color(0xFF4E7FFF),
+          elevation: 0,
+          // 그림자 없애기
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50), // 완전히 둥글게
+          ),
+          child: SvgPicture.asset(
+            'assets/icons/pencil.svg',
+            width: 30,
+            height: 30,
+          ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -67,11 +95,31 @@ class _BoardListScreenState extends State<BoardListScreen> {
             ),
             TextFormField(
               decoration: InputDecoration(
-                labelText: '제목을 입력하세요',
-                border: const OutlineInputBorder(),
+                hintText: '제목을 입력하세요',
+                hintStyle: const TextStyle(color: Colors.grey),
+                // Hint 색상 설정
+                contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                // 시작 패딩 설정
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide:
+                      const BorderSide(color: Color(0xFF4E7FFF), width: 2),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide:
+                      const BorderSide(color: Color(0xFF4E7FFF), width: 2),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide:
+                      const BorderSide(color: Color(0xFF4E7FFF), width: 2),
+                ),
                 suffixIcon: GestureDetector(
                   child: const Icon(
                     Icons.search,
+                    color: Color(0xFF4E7FFF),
+                    size: 30,
                   ),
                 ),
               ),
@@ -88,29 +136,33 @@ class _BoardListScreenState extends State<BoardListScreen> {
             ),
             Expanded(
               child: ListView.separated(
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BoardDetailScreen(
-                                boardResult: filteredList[index],
-                              ),
-                            ),
-                          );
-                        },
-                        child: Board(
-                          boardResult: filteredList[index],
-                        ));
-                  },
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const Column(children: [
-                        SizedBox(
-                          height: 10,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BoardDetailScreen(
+                            boardResult: filteredList[index],
+                          ),
                         ),
-                      ]),
-                  itemCount: filteredList.length),
+                      );
+                    },
+                    child: Board(
+                      boardResult: filteredList[index],
+                    ),
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) =>
+                    const Column(
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+                itemCount: filteredList.length,
+              ),
             ),
           ],
         ),

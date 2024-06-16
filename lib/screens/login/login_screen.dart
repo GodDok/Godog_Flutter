@@ -2,8 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:godog/screens/login/services/login_service.dart';
 import 'package:godog/widgets/password_input_widget.dart';
+
 import '../../core/cache_manager.dart';
 import '../../core/network_service.dart';
+import '../../main.dart';
 import '../../widgets/basic_text_button_widget.dart';
 import '../join/join_step1_screen.dart';
 import '../report/report_input_step1_screen.dart';
@@ -16,28 +18,54 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  Future<void> navigate(BuildContext context) async {
+    final isReportCompleted = await CacheManager().getReport();
+
+    if (isReportCompleted != null && isReportCompleted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MainPage(),
+          fullscreenDialog: true,
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ReportInputStep1Screen(),
+          fullscreenDialog: true,
+        ),
+      );
+    }
+  }
+
   String email = '';
   String password = '';
   bool obscureText = true;
 
   Future<void> login(email, password) async {
-    final Dio dio = NetworkService.instance.dio;
-    final LoginService loginService = LoginService(dio);
-    final result = await loginService.postLogin(email, password);
+    try {
+      final Dio dio = NetworkService.instance.dio;
+      final LoginService loginService = LoginService(dio);
+      final result = await loginService.postLogin(email, password);
 
-    final cacheManger = CacheManager();
-    cacheManger.saveAccessToken(result.result.accessToken);
-    cacheManger.saveRefreshToken(result.result.refreshToken);
+      if (result != null && result.isSuccess) {
+        final cacheManger = CacheManager();
+        await cacheManger.saveAccessToken(result.result.accessToken);
+        await cacheManger.saveRefreshToken(result.result.refreshToken);
 
-    print("로그인 성공");
+        navigate(context);
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result?.message ?? "에러가 발생했습니다.")));
+      }
+    } catch (e) {
+      print("Error: $e");
 
-    // 화면 이동
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ReportInputStep1Screen(),
-      ),
-    );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('에러가 발생했습니다.')));
+    }
   }
 
   Color getButtonColor() {
@@ -81,8 +109,12 @@ class _LoginScreenState extends State<LoginScreen> {
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
+                floatingLabelStyle: TextStyle(color: Colors.blueAccent),
                 labelText: '이메일',
                 border: OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
               ),
               onChanged: (value) {
                 setState(() {

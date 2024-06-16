@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:godog/models/strings_model.dart';
+import '../../../core/cache_manager.dart';
 import '../../../models/report_model.dart';
 
 abstract class IReportService {
@@ -48,7 +49,11 @@ class ReportService extends IReportService {
       String city,
       String district,
       String type) async {
-    final response = await dio.post("/api/v1/reports",
+    try {
+      final accessToken = await CacheManager().getAccessToken();
+
+      final response = await dio.post(
+        "/api/v1/reports",
         data: {
           'marginRate': marginRate,
           'totalBudget': totalBudget,
@@ -63,65 +68,121 @@ class ReportService extends IReportService {
           'district': district,
           'type': type,
         },
-        options: Options(contentType: Headers.jsonContentType));
+        options: Options(
+          contentType: Headers.jsonContentType,
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      final result = jsonDecode(response.toString());
-      return ReportModel.fromJson(result);
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.toString());
+        return ReportModel.fromJson(result);
+      } else {
+        throw Exception("Failed to post report");
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        final result = jsonDecode(e.response.toString());
+        return ReportModel.fromJson(result);
+      } else {
+        throw Exception("Network error");
+      }
     }
-
-    throw Error();
   }
 
   @override
   Future<StringsModel> getCity() async {
-    final response = await dio.get("/api/v1/region/city/경남",
-        options: Options(contentType: Headers.jsonContentType));
+    try {
+      final response = await dio.get(
+        "/api/v1/region/city/경남",
+        options: Options(contentType: Headers.jsonContentType),
+      );
 
-    if (response.statusCode == 200) {
-      final result = jsonDecode(response.toString());
-      return StringsModel.fromJson(result);
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.toString());
+        return StringsModel.fromJson(result);
+      } else {
+        throw Exception("Failed to fetch city");
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        final result = jsonDecode(e.response.toString());
+        return StringsModel.fromJson(result);
+      } else {
+        throw Exception("Network error");
+      }
     }
-
-    throw Error();
   }
 
   @override
   Future<StringsModel> getDistrict(String district) async {
-    final response = await dio.get("/api/v1/region/district/$district",
-        options: Options(contentType: Headers.jsonContentType));
+    try {
+      final response = await dio.get(
+        "/api/v1/region/district/$district",
+        options: Options(contentType: Headers.jsonContentType),
+      );
 
-    if (response.statusCode == 200) {
-      final result = jsonDecode(response.toString());
-      return StringsModel.fromJson(result);
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.toString());
+        return StringsModel.fromJson(result);
+      } else {
+        throw Exception("Failed to fetch district");
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        final result = jsonDecode(e.response.toString());
+        return StringsModel.fromJson(result);
+      } else {
+        throw Exception("Network error");
+      }
     }
-
-    throw Error();
   }
 
   @override
   Future<StringsModel> getCategory() async {
-    final response = await dio.get("/api/v1/store/category",
-        options: Options(contentType: Headers.jsonContentType));
+    try {
+      final response = await dio.get(
+        "/api/v1/store/category",
+        options: Options(contentType: Headers.jsonContentType),
+      );
 
-    if (response.statusCode == 200) {
-      final result = jsonDecode(response.toString());
-      return StringsModel.fromJson(result);
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.toString());
+        return StringsModel.fromJson(result);
+      } else {
+        throw Exception("Failed to fetch category");
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        final result = jsonDecode(e.response.toString());
+        return StringsModel.fromJson(result);
+      } else {
+        throw Exception("Network error");
+      }
     }
-
-    throw Error();
   }
 
   @override
   Future<StringsModel> getStore(String type) async {
-    final response = await dio.get("/api/v1/store/type/$type",
-        options: Options(contentType: Headers.jsonContentType));
+    try {
+      final response = await dio.get(
+        "/api/v1/store/type/$type",
+        options: Options(contentType: Headers.jsonContentType),
+      );
 
-    if (response.statusCode == 200) {
-      final result = jsonDecode(response.toString());
-      return StringsModel.fromJson(result);
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.toString());
+        return StringsModel.fromJson(result);
+      } else {
+        throw Exception("Failed to fetch store");
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        final result = jsonDecode(e.response.toString());
+        return StringsModel.fromJson(result);
+      } else {
+        throw Exception("Network error");
+      }
     }
-
-    throw Error();
   }
 }

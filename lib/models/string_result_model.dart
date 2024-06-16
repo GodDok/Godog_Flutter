@@ -13,5 +13,5 @@ class StringResultModel {
       : isSuccess = json['isSuccess'],
         code = json['code'],
         message = json['message'],
-        result = json['result'];
+        result = json['result'] ?? "";
 }

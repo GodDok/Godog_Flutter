@@ -1,18 +1,28 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:godog/models/break_even_model.dart';
+import 'package:godog/models/competition_model.dart';
 import 'package:godog/models/count_model.dart';
 import 'package:godog/models/policy_model.dart';
 import 'package:godog/models/population_model.dart';
+import 'package:godog/models/report_model.dart';
+import 'package:godog/models/user_model.dart';
+
+import '../../../core/cache_manager.dart';
 
 abstract class IHomeService {
   IHomeService(this.dio);
 
   Future<PopulationData?> getPopulation();
-  Future<PolicyModel?> getPolicys();
+  Future<PolicyModel?> getPolicys(String province); // 매개변수 추가
   Future<BreakEvenData?> getBreakEven();
   Future<CompetitionData?> getCountCity();
   Future<CompetitionData?> getCountAverage();
+  Future<CompetitionRate?> getCompetitionYearRate();
+  Future<CompetitionRate?> getCompetitionQuarterRate();
+  Future<UserNameData?> getUserName();
+  Future<ReportModel?> getCityName();
 
   final Dio dio;
 }
@@ -22,9 +32,10 @@ class HomeService extends IHomeService {
 
   @override
   Future<PopulationData?> getPopulation() async {
-    final response = await dio.get(
-      "/api/v1/population/gender",
-    );
+    final accessToken = await CacheManager().getAccessToken();
+
+    final response = await dio.get("/api/v1/population/gender",
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
     if (response.statusCode == 200) {
       final result = jsonDecode(response.toString());
       return PopulationData.fromJson(result);
@@ -35,9 +46,11 @@ class HomeService extends IHomeService {
 
   @override
   Future<BreakEvenData?> getBreakEven() async {
-    final response = await dio.post(
-      "/api/v1/break-even",
-    );
+    final accessToken = await CacheManager().getAccessToken();
+
+    final response = await dio.post("/api/v1/break-even",
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
+
     if (response.statusCode == 200) {
       final result = jsonDecode(response.toString());
       return BreakEvenData.fromJson(result);
@@ -48,12 +61,29 @@ class HomeService extends IHomeService {
 
   @override
   Future<CompetitionData?> getCountCity() async {
-    final response = await dio.get(
-      "/api/v1/competitors/count",
-    );
+    final accessToken = await CacheManager().getAccessToken();
+
+    final response = await dio.get("/api/v1/competitors/count",
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
+
     if (response.statusCode == 200) {
       final result = jsonDecode(response.toString());
       return CompetitionData.fromJson(result);
+    }
+
+    throw Error();
+  }
+
+  @override
+  Future<ReportModel?> getCityName() async {
+    final accessToken = await CacheManager().getAccessToken();
+
+    final response = await dio.get("/api/v1/reports",
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.toString());
+      return ReportModel.fromJson(result);
     }
 
     throw Error();
@@ -61,9 +91,11 @@ class HomeService extends IHomeService {
 
   @override
   Future<CompetitionData?> getCountAverage() async {
-    final response = await dio.get(
-      "/api/v1/competitors/average",
-    );
+    final accessToken = await CacheManager().getAccessToken();
+
+    final response = await dio.get("/api/v1/competitors/average",
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
+
     if (response.statusCode == 200) {
       final result = jsonDecode(response.toString());
       return CompetitionData.fromJson(result);
@@ -73,13 +105,61 @@ class HomeService extends IHomeService {
   }
 
   @override
-  Future<PolicyModel?> getPolicys() async {
+  Future<UserNameData?> getUserName() async {
+    final accessToken = await CacheManager().getAccessToken();
+
+    final response = await dio.get("/api/v1/myname",
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.toString());
+      return UserNameData.fromJson(result);
+    }
+
+    throw Error();
+  }
+
+  @override
+  Future<PolicyModel?> getPolicys(String province) async {
+    final accessToken = await CacheManager().getAccessToken();
+
     final response = await dio.get(
-      "/api/v1/getAllPolicies",
-    );
+        "/api/v1/searchQualifiesAllCondition?categories=$province",
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
+
     if (response.statusCode == 200) {
       final result = jsonDecode(response.toString());
       return PolicyModel.fromJson(result);
+    }
+
+    throw Error();
+  }
+
+  @override
+  Future<CompetitionRate?> getCompetitionYearRate() async {
+    final accessToken = await CacheManager().getAccessToken();
+
+    final response = await dio.get("/api/v1/competitors/year-rate",
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.toString());
+      return CompetitionRate.fromJson(result);
+    }
+
+    throw Error();
+  }
+
+  @override
+  Future<CompetitionRate?> getCompetitionQuarterRate() async {
+    final accessToken = await CacheManager().getAccessToken();
+
+    final response = await dio.get("/api/v1/competitors/quarter-rate",
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}));
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.toString());
+      return CompetitionRate.fromJson(result);
     }
 
     throw Error();

@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:godog/screens/join/services/mail_service.dart';
+
 import '../../core/network_service.dart';
 import '../../widgets/basic_text_button_widget.dart';
 import '../../widgets/next_button_widget.dart';
@@ -32,26 +34,50 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
   }
 
   Future<void> mailSend(email) async {
-    final result = await mailService.postMailSend(email);
+    try {
+      final result = await mailService.postMailSend(email);
 
-    if (result) {
-      // 타이머 시작
-      onStartPressed();
+      if (result) {
+        // 타이머 시작
+        onStartPressed();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('에러가 발생했습니다.')),
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('에러가 발생했습니다.')),
+      );
     }
   }
 
   Future<void> mailCheck(email, authNum) async {
-    final result = await mailService.postMailCheck(email, authNum);
+    try {
+      final result = await mailService.postMailCheck(email, authNum);
 
-    if (result) {
-      // 인증 완료 처리
-      flutterDialog();
+      if (result) {
+        // 인증 완료 처리
+        flutterDialog();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('에러가 발생했습니다.')),
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('에러가 발생했습니다.')),
+      );
     }
   }
 
   Color getVerificationNumberButtonColor() {
     if (email.isNotEmpty) {
-      return Colors.blue;
+      return Colors.blueAccent;
     } else {
       return Colors.grey;
     }
@@ -62,7 +88,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
       return Colors.grey.shade100;
     }
     if (certificationNum.isNotEmpty) {
-      return Colors.blue;
+      return Colors.blueAccent;
     } else {
       return Colors.grey;
     }
@@ -108,8 +134,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
   }
 
   String format(int seconds) {
-    var duration =
-        Duration(seconds: seconds).toString().split(".").first.substring(2);
+    var duration = Duration(seconds: seconds).toString().split(".").first.substring(2);
 
     return duration;
   }
@@ -123,53 +148,51 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
 
   void flutterDialog() {
     showDialog(
-        context: context,
-        //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
-            content: const Column(
-              mainAxisSize: MainAxisSize.min,
+      context: context,
+      //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          content: const Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "인증되었습니다.",
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "인증되었습니다.",
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.w600),
+              children: [
+                Container(
+                  width: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: TextButton(
+                    child: const Text(
+                      "확인",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    ),
+                    onPressed: () {
+                      certificationConfirmation();
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
               ],
             ),
-            actions: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.yellow,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: TextButton(
-                      child: const Text(
-                        "확인",
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.w600),
-                      ),
-                      onPressed: () {
-                        certificationConfirmation();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          );
-        });
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -182,9 +205,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
         child: Column(
           children: [
             const ProgressWidget(value: 0.3),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             const Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -194,12 +215,16 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 20),
             TextFormField(
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
+                floatingLabelStyle: TextStyle(color: Colors.blueAccent),
                 labelText: '아이디(이메일) 입력',
                 border: OutlineInputBorder(),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
               ),
               onChanged: (value) {
                 onPausePressed();
@@ -212,13 +237,17 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
                 });
               },
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 20),
             if (isProgressCertification)
               TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
+                  floatingLabelStyle: TextStyle(color: Colors.blueAccent),
                   labelText: '인증번호 입력',
                   border: OutlineInputBorder(),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent),
+                  ),
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -248,7 +277,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
                   ),
                 ],
               ),
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 20),
             if (!isProgressCertification)
               BasicTextButtonWidget(
                 text: '인증번호 받기',
@@ -267,8 +296,7 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
               BasicTextButtonWidget(
                 text: !isCompletedCertification ? '인증' : '완료',
                 backgroundColor: getVerificationButtonColor(),
-                textColor:
-                    !isCompletedCertification ? Colors.white : Colors.black,
+                textColor: !isCompletedCertification ? Colors.white : Colors.black,
                 onClick: () {
                   if (!isCompletedCertification) {
                     mailCheck(email, certificationNum);
@@ -277,18 +305,17 @@ class _JoinStep1ScreenState extends State<JoinStep1Screen> {
               ),
             Expanded(child: Container()),
             NextButtonWidget(
-                isComplete: isCompletedCertification,
-                onClick: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => JoinStep2Screen(email),
-                    ),
-                  );
-                }),
-            const SizedBox(
-              height: 50,
-            )
+              isComplete: isCompletedCertification,
+              onClick: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => JoinStep2Screen(email),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 50),
           ],
         ),
       ),
